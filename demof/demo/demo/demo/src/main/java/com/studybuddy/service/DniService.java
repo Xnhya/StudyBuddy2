@@ -41,7 +41,7 @@ public class DniService {
     @PostConstruct
     public void init() {
         // Validación básica
-        String finalToken = (apiToken == null || apiToken.equals("demo")) ? "" : apiToken;
+        String finalToken = (apiToken == null || apiToken.trim().isEmpty()) ? "" : apiToken;
         
         this.webClient = WebClient.builder()
                 .baseUrl(apiUrl)
@@ -77,6 +77,7 @@ public class DniService {
                 });
     }
 
+    @SuppressWarnings("unchecked")
     private DniDTO mapToDniDTO(Map<String, Object> response) {
         
         boolean success = Boolean.TRUE.equals(response.get("success"));

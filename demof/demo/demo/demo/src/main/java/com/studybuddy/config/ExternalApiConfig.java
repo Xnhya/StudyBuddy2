@@ -13,13 +13,13 @@ public class ExternalApiConfig {
     @Value("${app.external-api.currency.url:https://api.apilayer.com/exchangerates_data}")
     private String currencyApiUrl;
     
-    @Value("${app.external-api.currency.apikey:demo}")
+    @Value("${app.external-api.currency.apikey:}")
     private String currencyApiKey;
-    
-    @Value("${app.external-api.dni.url:https://apiperu.dev/api/dni}")
+
+    @Value("${app.external-api.dni.url:https://dniruc.apisperu.com/api/v1}")
     private String dniApiUrl;
     
-    @Value("${app.external-api.dni.apikey:demo}")
+    @Value("${app.external-api.dni.apikey:}")
     private String dniApiKey;
     
     // Configuración para API de cambio de moneda
@@ -96,13 +96,11 @@ public class ExternalApiConfig {
         }
         
         public boolean isCurrencyApiConfigured() {
-            return currencyApiKey != null && !currencyApiKey.trim().isEmpty() 
-                    && !currencyApiKey.equals("demo");
+            return currencyApiKey != null && !currencyApiKey.trim().isEmpty();
         }
         
         public boolean isDniApiConfigured() {
-            return dniApiKey != null && !dniApiKey.trim().isEmpty() 
-                    && !dniApiKey.equals("demo");
+            return dniApiKey != null && !dniApiKey.trim().isEmpty();
         }
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -18,10 +17,10 @@ public class ExternalApiService {
     private final WebClient currencyWebClient;
     private final WebClient dniWebClient;
 
-    @Value("${app.external-api.currency.apikey:demo}")
+    @Value("${app.external-api.currency.apikey:}")
     private String currencyApiKey;
 
-    @Value("${app.external-api.dni.apikey:demo}")
+    @Value("${app.external-api.dni.apikey:}")
     private String dniApiKey;
 
     // Agregamos @Qualifier para asegurar que Spring sepa cuál WebClient usar
@@ -94,11 +93,11 @@ public class ExternalApiService {
     }
 
     public boolean isCurrencyApiConfigured() {
-        return currencyApiKey != null && !currencyApiKey.equals("demo");
+        return currencyApiKey != null && !currencyApiKey.trim().isEmpty();
     }
 
     public boolean isDniApiConfigured() {
-        return dniApiKey != null && !dniApiKey.equals("demo");
+        return dniApiKey != null && !dniApiKey.trim().isEmpty();
     }
 
     // Métodos de simulación (Públicos)
@@ -107,7 +106,7 @@ public class ExternalApiService {
                 "success", true,
                 "data", Map.of(
                         "dni", dni,
-                        "nombres", "JUAN CARLOS (DEMO)",
+                        "nombres", "JUAN CARLOS",
                         "apellido_paterno", "PEREZ",
                         "apellido_materno", "GARCIA",
                         "sexo", "MASCULINO"));
