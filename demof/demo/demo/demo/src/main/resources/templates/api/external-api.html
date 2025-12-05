@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APIs Externas - StudyBuddy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard-styles.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar unificado -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-graduation-cap me-2"></i>StudyBuddy</h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <a th:href="@{/user/dashboard}" class="nav-link">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/groups}" class="nav-link">
+                        <i class="fas fa-users nav-icon"></i>
+                        Grupos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/user/resources}" class="nav-link">
+                        <i class="fas fa-book nav-icon"></i>
+                        Recursos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/user/search}" class="nav-link">
+                        <i class="fas fa-search nav-icon"></i>
+                        Buscar
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/api/currency}" class="nav-link">
+                        <i class="fas fa-money-bill-wave nav-icon"></i>
+                        Conversor
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/api/dni}" class="nav-link">
+                        <i class="fas fa-id-card nav-icon"></i>
+                        Consulta DNI
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/api/external}" class="nav-link active">
+                        <i class="fas fa-plug nav-icon"></i>
+                        APIs Externas
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <span sec:authentication="name">U</span>
+                    </div>
+                    <div class="user-info">
+                        <h6 sec:authentication="name">Usuario</h6>
+                        <small>
+                            <span sec:authentication="principal.authorities">Usuario</span>
+                        </small>
+                    </div>
+                </div>
+                <div sec:authorize="isAuthenticated()" class="mt-3">
+                    <form th:action="@{/auth/logout}" method="post">
+                        <button type="submit" class="btn btn-outline-danger w-100 text-start">
+                            <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <div th:replace="fragments/messages :: messages"></div>
+            
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="page-title">
+                    <h1><i class="fas fa-plug me-2" style="color: var(--warning-color);"></i>APIs Externas</h1>
+                    <p>Integración con servicios externos</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-light-modern btn-modern" onclick="checkAllApis()">
+                        <i class="fas fa-sync-alt me-1"></i> Probar Todas
+                    </button>
+                    <button class="btn btn-primary-modern btn-modern" data-bs-toggle="modal" data-bs-target="#apiDocsModal">
+                        <i class="fas fa-book me-1"></i> Documentación
+                    </button>
+                </div>
+            </header>
+            
+            <!-- API Status -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value text-success">2/3</div>
+                            <div class="stat-label">APIs Activas</div>
+                        </div>
+                        <div class="stat-icon bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="text-muted small">
+                        <i class="fas fa-check-circle me-1"></i> Sistema operativo
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value text-primary">47</div>
+                            <div class="stat-label">Consultas Hoy</div>
+                        </div>
+                        <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="text-muted small">
+                        <i class="fas fa-arrow-up me-1"></i> +12 que ayer
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" style="color: var(--success-color);">320ms</div>
+                            <div class="stat-label">Tiempo Respuesta</div>
+                        </div>
+                        <div class="stat-icon bg-info bg-opacity-10 text-info">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                    </div>
+                    <div class="text-muted small">
+                        <i class="fas fa-check-circle me-1"></i> Óptimo
+                    </div>
+                </div>
+            </div>
+            
+            <!-- API Services -->
+            <div class="row">
+                <!-- Currency API -->
+                <div class="col-md-4 mb-4">
+                    <div class="card-modern h-100">
+                        <div class="card-header-modern d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-money-bill-wave me-2"></i>API de Moneda</h5>
+                            <span class="badge bg-success badge-modern">ACTIVA</span>
+                        </div>
+                        <div class="card-body-modern">
+                            <p class="mb-3">
+                                Conversor de moneda en tiempo real con soporte para 8 monedas principales.
+                            </p>
+                            <div class="mb-3">
+                                <h6 class="fw-bold mb-2">Endpoint:</h6>
+                                <code class="d-block p-2 bg-light rounded small">
+                                    /api/external/currency/convert
+                                </code>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="fw-bold mb-2">Características:</h6>
+                                <ul class="small mb-0">
+                                    <li>Tasas actualizadas cada 30 min</li>
+                                    <li>Historial de conversiones</li>
+                                    <li>8 monedas soportadas</li>
+                                    <li>Cache para mejor rendimiento</li>
+                                </ul>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a th:href="@{/api/currency}" class="btn btn-primary-modern btn-modern btn-sm">
+                                    <i class="fas fa-external-link-alt me-2"></i> Ir al Conversor
+                                </a>
+                                <button class="btn btn-light-modern btn-modern btn-sm" onclick="testCurrencyApi()">
+                                    <i class="fas fa-vial me-2"></i> Probar API
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DNI API -->
+                <div class="col-md-4 mb-4">
+                    <div class="card-modern h-100">
+                        <div class="card-header-modern d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-id-card me-2"></i>API de DNI</h5>
+                            <span class="badge bg-success badge-modern">ACTIVA</span>
+                        </div>
+                        <div class="card-body-modern">
+                            <p class="mb-3">
+                                Consulta de datos personales mediante número de DNI (solo Perú).
+                            </p>
+                            <div class="mb-3">
+                                <h6 class="fw-bold mb-2">Endpoint:</h6>
+                                <code class="d-block p-2 bg-light rounded small">
+                                    /api/external/dni/{dni}
+                                </code>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="fw-bold mb-2">Características:</h6>
+                                <ul class="small mb-0">
+                                    <li>Validación de formato DNI</li>
+                                    <li>Cache de consultas</li>
+                                    <li>Modo demo disponible</li>
+                                    <li>Límite: 10 consultas/minuto</li>
+                                </ul>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a th:href="@{/api/dni}" class="btn btn-primary-modern btn-modern btn-sm">
+                                    <i class="fas fa-external-link-alt me-2"></i> Ir al Consultor
+                                </a>
+                                <button class="btn btn-light-modern btn-modern btn-sm" onclick="testDniApi()">
+                                    <i class="fas fa-vial me-2"></i> Probar API
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Weather API (Coming Soon) -->
+                <div class="col-md-4 mb-4">
+                    <div class="card-modern h-100">
+                        <div class="card-header-modern d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-cloud-sun me-2"></i>API del Clima</h5>
+                            <span class="badge bg-secondary badge-modern">PRÓXIMAMENTE</span>
+                        </div>
+                        <div class="card-body-modern">
+                            <p class="mb-3">
+                                Pronóstico del tiempo para diferentes ciudades (en desarrollo).
+                            </p>
+                            <div class="mb-3">
+                                <h6 class="fw-bold mb-2">Endpoint:</h6>
+                                <code class="d-block p-2 bg-light rounded small">
+                                    /api/external/weather/{city}
+                                </code>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="fw-bold mb-2">Características:</h6>
+                                <ul class="small mb-0">
+                                    <li>Pronóstico 5 días</li>
+                                    <li>Datos en tiempo real</li>
+                                    <li>Múltiples ciudades</li>
+                                    <li>Métricas detalladas</li>
+                                </ul>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-light-modern btn-modern btn-sm" disabled>
+                                    <i class="fas fa-external-link-alt me-2"></i> Próximamente
+                                </button>
+                                <button class="btn btn-light-modern btn-modern btn-sm" disabled>
+                                    <i class="fas fa-vial me-2"></i> En desarrollo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- API Testing -->
+            <div class="card-modern mb-4">
+                <div class="card-header-modern">
+                    <h5><i class="fas fa-vial me-2"></i>Pruebas de API</h5>
+                </div>
+                <div class="card-body-modern">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Probar API de Moneda</h6>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control-modern form-control" 
+                                       id="testCurrencyInput" 
+                                       placeholder="Ej: USD,PEN,100">
+                                <button class="btn btn-primary-modern btn-modern" onclick="testCurrencyApiManual()">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">
+                                Formato: from,to,amount (Ej: USD,PEN,100)
+                            </small>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Probar API de DNI</h6>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control-modern form-control" 
+                                       id="testDniInput" 
+                                       placeholder="Ej: 71234567" 
+                                       maxlength="8">
+                                <button class="btn btn-primary-modern btn-modern" onclick="testDniApiManual()">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">
+                                8 dígitos del DNI (Ej: 71234567)
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <!-- Test Results -->
+                    <div class="mt-4" id="testResults" style="display: none;">
+                        <h6 class="fw-bold mb-3">Resultados de la Prueba</h6>
+                        <div class="card-modern">
+                            <div class="card-body-modern">
+                                <pre id="testResultText" class="mb-0" style="font-size: 0.875rem;"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- API Documentation -->
+            <div class="card-modern">
+                <div class="card-header-modern">
+                    <h5><i class="fas fa-book me-2"></i>Documentación Técnica</h5>
+                </div>
+                <div class="card-body-modern">
+                    <div class="accordion" id="apiDocsAccordion">
+                        <!-- Currency API Docs -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#currencyDocs">
+                                    <i class="fas fa-money-bill-wave me-2 text-success"></i>
+                                    API de Moneda - Documentación
+                                </button>
+                            </h2>
+                            <div id="currencyDocs" class="accordion-collapse collapse show" 
+                                 data-bs-parent="#apiDocsAccordion">
+                                <div class="accordion-body">
+                                    <h6 class="fw-bold">Endpoint Principal</h6>
+                                    <code class="d-block mb-3">GET /api/external/currency/convert</code>
+                                    
+                                    <h6 class="fw-bold mt-3">Parámetros</h6>
+                                    <div class="table-responsive">
+                                        <table class="table-modern table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Parámetro</th>
+                                                    <th>Tipo</th>
+                                                    <th>Requerido</th>
+                                                    <th>Descripción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>from</td>
+                                                    <td>string</td>
+                                                    <td>✓</td>
+                                                    <td>Moneda origen (ej: USD)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>to</td>
+                                                    <td>string</td>
+                                                    <td>✓</td>
+                                                    <td>Moneda destino (ej: PEN)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>amount</td>
+                                                    <td>number</td>
+                                                    <td>✓</td>
+                                                    <td>Cantidad a convertir</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <h6 class="fw-bold mt-3">Ejemplo de Uso</h6>
+                                    <pre class="bg-light p-3 rounded" style="font-size: 0.875rem;">
+// Request
+GET /api/external/currency/convert?from=USD&to=PEN&amount=100
+
+// Response
+{
+  "success": true,
+  "data": {
+    "from": "USD",
+    "to": "PEN",
+    "amount": 100,
+    "result": 375.00,
+    "rate": 3.75
+  }
+}</pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- DNI API Docs -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#dniDocs">
+                                    <i class="fas fa-id-card me-2 text-primary"></i>
+                                    API de DNI - Documentación
+                                </button>
+                            </h2>
+                            <div id="dniDocs" class="accordion-collapse collapse" 
+                                 data-bs-parent="#apiDocsAccordion">
+                                <div class="accordion-body">
+                                    <h6 class="fw-bold">Endpoint Principal</h6>
+                                    <code class="d-block mb-3">GET /api/external/dni/{dni}</code>
+                                    
+                                    <h6 class="fw-bold mt-3">Parámetros</h6>
+                                    <div class="table-responsive">
+                                        <table class="table-modern table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Parámetro</th>
+                                                    <th>Tipo</th>
+                                                    <th>Requerido</th>
+                                                    <th>Descripción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>dni</td>
+                                                    <td>string</td>
+                                                    <td>✓</td>
+                                                    <td>DNI de 8 dígitos (path variable)</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <h6 class="fw-bold mt-3">Ejemplo de Uso</h6>
+                                    <pre class="bg-light p-3 rounded" style="font-size: 0.875rem;">
+// Request
+GET /api/external/dni/71234567
+
+// Response (éxito)
+{
+  "success": true,
+  "data": {
+    "dni": "71234567",
+    "nombres": "JUAN CARLOS",
+    "apellidoPaterno": "PEREZ",
+    "apellidoMaterno": "GARCIA"
+  }
+}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- API Docs Modal -->
+    <div class="modal fade" id="apiDocsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-book me-2 text-warning"></i>Documentación de APIs
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 class="fw-bold">Configuración</h6>
+                    <p>Todas las APIs externas requieren configuración en <code>application.properties</code>:</p>
+                    <pre class="bg-light p-3 rounded" style="font-size: 0.875rem;">
+# Currency API
+app.external-api.currency.base-url=https://api.exchangerate-api.com/v4
+app.external-api.currency.apikey=tu_api_key_aquí
+
+# DNI API  
+app.external-api.dni.base-url=https://api.perudni.com/v1
+app.external-api.dni.apikey=tu_api_key_aquí</pre>
+                    
+                    <h6 class="fw-bold mt-4">Modo Demo</h6>
+                    <p>Si no se configuran las API keys, el sistema funciona en modo demo con datos simulados.</p>
+                    
+                    <h6 class="fw-bold mt-4">Límites y Restricciones</h6>
+                    <ul>
+                        <li><strong>Rate limiting:</strong> 10 solicitudes por minuto por usuario</li>
+                        <li><strong>Cache:</strong> Respuestas cacheadas por 30 minutos</li>
+                        <li><strong>Timeout:</strong> 5 segundos por solicitud</li>
+                        <li><strong>Retry:</strong> 3 intentos automáticos en caso de error</li>
+                    </ul>
+                    
+                    <h6 class="fw-bold mt-4">Códigos de Estado HTTP</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span class="badge bg-success badge-modern">200</span> Éxito<br>
+                            <span class="badge bg-danger badge-modern">400</span> Solicitud inválida<br>
+                            <span class="badge bg-danger badge-modern">404</span> No encontrado
+                        </div>
+                        <div class="col-md-6">
+                            <span class="badge bg-danger badge-modern">429</span> Límite excedido<br>
+                            <span class="badge bg-danger badge-modern">500</span> Error del servidor<br>
+                            <span class="badge bg-warning badge-modern">503</span> Servicio no disponible
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function testCurrencyApi() {
+            showTestResult('Probando API de Moneda...', 'info');
+            
+            setTimeout(() => {
+                fetch('/api/external/currency/convert?from=USD&to=PEN&amount=100')
+                    .then(response => response.json())
+                    .then(data => {
+                        const result = {
+                            success: true,
+                            endpoint: '/api/external/currency/convert',
+                            status: 'ACTIVE',
+                            testData: data
+                        };
+                        showTestResult(JSON.stringify(result, null, 2), 'success');
+                    })
+                    .catch(error => {
+                        showTestResult('Error: ' + error.message, 'error');
+                    });
+            }, 1000);
+        }
+        
+        function testDniApi() {
+            showTestResult('Probando API de DNI...', 'info');
+            
+            setTimeout(() => {
+                fetch('/api/external/dni/71234567')
+                    .then(response => response.json())
+                    .then(data => {
+                        const result = {
+                            success: true,
+                            endpoint: '/api/external/dni/71234567',
+                            status: 'ACTIVE',
+                            testData: data
+                        };
+                        showTestResult(JSON.stringify(result, null, 2), 'success');
+                    })
+                    .catch(error => {
+                        showTestResult('Error: ' + error.message, 'error');
+                    });
+            }, 1000);
+        }
+        
+        function testCurrencyApiManual() {
+            const input = document.getElementById('testCurrencyInput').value;
+            const parts = input.split(',');
+            
+            if (parts.length !== 3) {
+                alert('Formato inválido. Usa: from,to,amount (ej: USD,PEN,100)');
+                return;
+            }
+            
+            const [from, to, amount] = parts;
+            showTestResult(`Probando conversión: ${amount} ${from} → ${to}`, 'info');
+            
+            fetch(`/api/external/currency/convert?from=${from}&to=${to}&amount=${amount}`)
+                .then(response => response.json())
+                .then(data => {
+                    showTestResult(JSON.stringify(data, null, 2), 'success');
+                })
+                .catch(error => {
+                    showTestResult('Error: ' + error.message, 'error');
+                });
+        }
+        
+        function testDniApiManual() {
+            const dni = document.getElementById('testDniInput').value;
+            
+            if (!/^\d{8}$/.test(dni)) {
+                alert('DNI inválido. Debe tener 8 dígitos.');
+                return;
+            }
+            
+            showTestResult(`Probando DNI: ${dni}`, 'info');
+            
+            fetch(`/api/external/dni/${dni}`)
+                .then(response => response.json())
+                .then(data => {
+                    showTestResult(JSON.stringify(data, null, 2), 'success');
+                })
+                .catch(error => {
+                    showTestResult('Error: ' + error.message, 'error');
+                });
+        }
+        
+        function checkAllApis() {
+            showTestResult('Probando todas las APIs...', 'info');
+            
+            Promise.all([
+                fetch('/api/external/currency/convert?from=USD&to=PEN&amount=100').then(r => r.json()),
+                fetch('/api/external/dni/71234567').then(r => r.json())
+            ]).then(([currency, dni]) => {
+                const results = {
+                    currencyApi: {
+                        status: currency.success ? 'ACTIVE' : 'ERROR',
+                        response: currency
+                    },
+                    dniApi: {
+                        status: dni.success ? 'ACTIVE' : 'ERROR',
+                        response: dni
+                    },
+                    summary: {
+                        active: (currency.success ? 1 : 0) + (dni.success ? 1 : 0),
+                        total: 2,
+                        systemStatus: 'OPERATIONAL'
+                    }
+                };
+                showTestResult(JSON.stringify(results, null, 2), 'success');
+            }).catch(error => {
+                showTestResult('Error: ' + error.message, 'error');
+            });
+        }
+        
+        function showTestResult(text, type) {
+            const resultsDiv = document.getElementById('testResults');
+            const resultText = document.getElementById('testResultText');
+            
+            resultText.textContent = text;
+            resultsDiv.style.display = 'block';
+            
+            // Scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('testCurrencyInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    testCurrencyApiManual();
+                }
+            });
+            
+            document.getElementById('testDniInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    testDniApiManual();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

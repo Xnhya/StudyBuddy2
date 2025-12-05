@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - StudyBuddy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard-styles.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar unificado -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-graduation-cap me-2"></i>StudyBuddy</h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <a th:href="@{/admin/dashboard}" class="nav-link active">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/admin/users}" class="nav-link">
+                        <i class="fas fa-users-cog nav-icon"></i>
+                        Gestión Usuarios
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/admin/groups}" class="nav-link">
+                        <i class="fas fa-users nav-icon"></i>
+                        Gestión Grupos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/admin/reports}" class="nav-link">
+                        <i class="fas fa-flag nav-icon"></i>
+                        Reportes
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <span sec:authentication="name">A</span>
+                    </div>
+                    <div class="user-info">
+                        <h6 sec:authentication="name">Admin</h6>
+                        <small>Administrador</small>
+                    </div>
+                </div>
+                <div sec:authorize="isAuthenticated()" class="mt-3">
+                    <form th:action="@{/auth/logout}" method="post">
+                        <button type="submit" class="btn btn-outline-danger w-100 text-start">
+                            <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Contenido principal -->
+        <main class="main-content">
+                <!-- Messages -->
+                <div th:replace="fragments/messages :: messages"></div>
+                
+            <div th:replace="fragments/messages :: messages"></div>
+            
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="page-title">
+                    <h1><i class="fas fa-cog me-2" style="color: var(--primary-color);"></i>Panel de Administración</h1>
+                    <p>Gestión completa del sistema StudyBuddy</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-light-modern btn-modern">
+                        <i class="fas fa-sync-alt me-1"></i> Actualizar
+                    </button>
+                    <button class="btn btn-primary-modern btn-modern">
+                        <i class="fas fa-download me-1"></i> Exportar
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Quick Stats -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value text-primary">125</div>
+                            <div class="stat-label">Usuarios</div>
+                        </div>
+                        <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-trend">
+                        <i class="fas fa-arrow-up me-1"></i> +12 esta semana
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" style="color: var(--success-color);">42</div>
+                            <div class="stat-label">Grupos</div>
+                        </div>
+                        <div class="stat-icon bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="text-muted small">
+                        <i class="fas fa-arrow-up me-1"></i> +3 activos
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" style="color: var(--warning-color);">8</div>
+                            <div class="stat-label">Reportes</div>
+                        </div>
+                        <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                    </div>
+                    <div class="text-danger small">
+                        <i class="fas fa-clock me-1"></i> 3 pendientes
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" style="color: var(--success-color);">89%</div>
+                            <div class="stat-label">Actividad</div>
+                        </div>
+                        <div class="stat-icon bg-info bg-opacity-10 text-info">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="text-muted small">
+                        <i class="fas fa-check-circle me-1"></i> Sistema estable
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="card-modern mb-4">
+                <div class="card-header-modern">
+                    <h5><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h5>
+                </div>
+                <div class="card-body-modern">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a th:href="@{/admin/users}" class="btn btn-primary-modern btn-modern w-100">
+                                <i class="fas fa-users-cog me-2"></i>Gestión Usuarios
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a th:href="@{/admin/groups}" class="btn btn-primary-modern btn-modern w-100">
+                                <i class="fas fa-users me-2"></i>Gestión Grupos
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a th:href="@{/admin/reports}" class="btn btn-primary-modern btn-modern w-100">
+                                <i class="fas fa-flag me-2"></i>Ver Reportes
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <button class="btn btn-light-modern btn-modern w-100">
+                                <i class="fas fa-cogs me-2"></i>Ajustes Sistema
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card-modern">
+                        <div class="card-header-modern d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-history me-2"></i>Actividad Reciente</h5>
+                            <select class="form-select-modern form-select form-select-sm w-auto">
+                                <option>Últimas 24h</option>
+                                <option>Última semana</option>
+                            </select>
+                        </div>
+                        <div class="card-body-modern">
+                            <div class="table-responsive">
+                                <table class="table-modern table">
+                                    <thead>
+                                        <tr>
+                                            <th>Usuario</th>
+                                            <th>Acción</th>
+                                            <th>Fecha</th>
+                                            <th>IP</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>admin</td>
+                                            <td>Inicio de sesión</td>
+                                            <td>Hace 5 min</td>
+                                            <td>192.168.1.1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>juan_perez</td>
+                                            <td>Creó nuevo grupo</td>
+                                            <td>Hace 1 hora</td>
+                                            <td>192.168.1.15</td>
+                                        </tr>
+                                        <tr>
+                                            <td>maria_garcia</td>
+                                            <td>Subió recurso</td>
+                                            <td>Hace 2 horas</td>
+                                            <td>192.168.1.20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>carlos_lopez</td>
+                                            <td>Reportó contenido</td>
+                                            <td>Hace 3 horas</td>
+                                            <td>192.168.1.25</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card-modern">
+                        <div class="card-header-modern">
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i>Alertas del Sistema</h5>
+                        </div>
+                        <div class="card-body-modern">
+                            <div class="alert alert-warning border-0">
+                                <i class="fas fa-database me-2"></i>
+                                <strong>Base de datos:</strong> 85% de uso
+                            </div>
+                            <div class="alert alert-info border-0">
+                                <i class="fas fa-server me-2"></i>
+                                <strong>Servidor:</strong> Carga normal
+                            </div>
+                            <div class="alert alert-success border-0">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                <strong>Seguridad:</strong> Todo normal
+                            </div>
+                            <div class="alert alert-danger border-0">
+                                <i class="fas fa-ban me-2"></i>
+                                <strong>Usuarios bloqueados:</strong> 2 usuarios
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

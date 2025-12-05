@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!-- Sidebar Fragment - Usage: th:replace="fragments/sidebar :: sidebar('dashboard')" -->
+    <div th:fragment="sidebar(activePage)">
+        <div class="sidebar bg-light border-end" style="min-height: calc(100vh - 56px);">
+            <div class="sidebar-sticky pt-3">
+                <!-- User Info Card -->
+                <div sec:authorize="isAuthenticated()" class="card border-0 bg-light mb-3">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-user-circle fa-3x text-primary"></i>
+                        </div>
+                        <h6 sec:authentication="name" class="card-title mb-1">Usuario</h6>
+                        <small class="text-muted">
+                            <span sec:authentication="principal.authorities">USER</span>
+                        </small>
+                    </div>
+                </div>
+                
+                <!-- Main Navigation -->
+                <nav class="nav flex-column">
+                    <div class="sidebar-heading px-3 mb-2 text-muted">
+                        <small>MENÚ PRINCIPAL</small>
+                    </div>
+                    
+                    <a class="nav-link py-2" th:href="@{/user/dashboard}" 
+                       th:classappend="${activePage == 'dashboard' ? 'active bg-primary text-white' : 'text-dark'}">
+                        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                    </a>
+                    
+                    <a class="nav-link py-2" th:href="@{/user/profile}" 
+                       th:classappend="${activePage == 'profile' ? 'active bg-primary text-white' : 'text-dark'}">
+                        <i class="fas fa-user me-2"></i> Mi Perfil
+                    </a>
+                    
+                    <a class="nav-link py-2" th:href="@{/user/groups}" 
+                       th:classappend="${activePage == 'groups' ? 'active bg-primary text-white' : 'text-dark'}">
+                        <i class="fas fa-users me-2"></i> Mis Grupos
+                    </a>
+                    
+                    <a class="nav-link py-2" th:href="@{/user/resources}" 
+                       th:classappend="${activePage == 'resources' ? 'active bg-primary text-white' : 'text-dark'}">
+                        <i class="fas fa-book me-2"></i> Recursos
+                    </a>
+                    
+                    <a class="nav-link py-2" th:href="@{/user/search}" 
+                       th:classappend="${activePage == 'search' ? 'active bg-primary text-white' : 'text-dark'}">
+                        <i class="fas fa-search me-2"></i> Buscar Compañeros
+                    </a>
+                    
+                    <!-- Divider -->
+                    <div class="sidebar-heading px-3 my-2 text-muted">
+                        <small>HERRAMIENTAS</small>
+                    </div>
+                    
+                    <a class="nav-link py-2" th:href="@{/api/currency}" 
+                       th:classappend="${activePage == 'currency' ? 'active bg-primary text-white' : 'text-dark'}">
+                        <i class="fas fa-money-bill-wave me-2"></i> Conversor Moneda
+                    </a>
+                    
+                    <a class="nav-link py-2" th:href="@{/api/dni}" 
+                       th:classappend="${activePage == 'dni' ? 'active bg-primary text-white' : 'text-dark'}">
+                        <i class="fas fa-id-card me-2"></i> Consulta DNI
+                    </a>
+                    
+                    <!-- Premium Features -->
+                    <div sec:authorize="hasRole('PREMIUM')">
+                        <div class="sidebar-heading px-3 my-2 text-muted">
+                            <small>PREMIUM</small>
+                        </div>
+                        
+                        <a class="nav-link py-2 text-warning" th:href="@{/user/premium}">
+                            <i class="fas fa-crown me-2"></i> Funciones Premium
+                        </a>
+                    </div>
+                    
+                    <!-- Admin Section -->
+                    <div sec:authorize="hasRole('ADMIN')">
+                        <div class="sidebar-heading px-3 my-2 text-muted">
+                            <small>ADMINISTRACIÓN</small>
+                        </div>
+                        
+                        <a class="nav-link py-2 text-danger" th:href="@{/admin/dashboard}">
+                            <i class="fas fa-cog me-2"></i> Panel Admin
+                        </a>
+                        <a class="nav-link py-2 text-danger" th:href="@{/admin/users}">
+                            <i class="fas fa-users-cog me-2"></i> Gestión Usuarios
+                        </a>
+                    </div>
+                    
+                    <!-- Moderator Section -->
+                    <div sec:authorize="hasRole('MODERATOR')">
+                        <div class="sidebar-heading px-3 my-2 text-muted">
+                            <small>MODERACIÓN</small>
+                        </div>
+                        
+                        <a class="nav-link py-2 text-info" th:href="@{/moderator/dashboard}">
+                            <i class="fas fa-shield-alt me-2"></i> Panel Moderador
+                        </a>
+                        <a class="nav-link py-2 text-info" th:href="@{/moderator/content}">
+                            <i class="fas fa-flag me-2"></i> Moderar Contenido
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- Logout (botón al final del menú) -->
+                <div sec:authorize="isAuthenticated()" class="px-3 mt-3 border-top pt-3">
+                    <form th:action="@{/auth/logout}" method="post" id="sidebarLogoutForm">
+                        <button type="submit" class="btn btn-outline-danger w-100 text-start py-2">
+                            <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Bottom Section -->
+                <div class="mt-auto p-3">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body p-2 text-center">
+                            <small class="text-muted d-block mb-1">StudyBuddy v1.0</small>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a th:href="@{/help}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-question-circle"></i>
+                                </a>
+                                <a th:href="@{/settings}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-cog"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

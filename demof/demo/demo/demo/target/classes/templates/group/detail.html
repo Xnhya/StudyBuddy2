@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Grupo - StudyBuddy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard-styles.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar unificado -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-graduation-cap me-2"></i>StudyBuddy</h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <a th:href="@{/user/dashboard}" class="nav-link">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/groups}" class="nav-link active">
+                        <i class="fas fa-users nav-icon"></i>
+                        Grupos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/user/resources}" class="nav-link">
+                        <i class="fas fa-book nav-icon"></i>
+                        Recursos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/user/search}" class="nav-link">
+                        <i class="fas fa-search nav-icon"></i>
+                        Buscar
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/api/currency}" class="nav-link">
+                        <i class="fas fa-money-bill-wave nav-icon"></i>
+                        Conversor
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <span sec:authentication="name">U</span>
+                    </div>
+                    <div class="user-info">
+                        <h6 sec:authentication="name">Usuario</h6>
+                        <small>
+                            <span sec:authentication="principal.authorities">Usuario</span>
+                        </small>
+                    </div>
+                </div>
+                <div sec:authorize="isAuthenticated()" class="mt-3">
+                    <form th:action="@{/auth/logout}" method="post">
+                        <button type="submit" class="btn btn-outline-danger w-100 text-start">
+                            <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <div th:replace="fragments/messages :: messages"></div>
+            
+            <!-- Group Header -->
+            <div class="card-modern mb-4">
+                <div class="card-body-modern">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="mb-2">
+                                <i class="fas fa-users me-2" style="color: var(--primary-color);"></i>Matemáticas Avanzadas
+                                <span class="badge bg-success badge-modern ms-2">Activo</span>
+                            </h1>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-book me-2"></i>Cálculo y Álgebra Lineal
+                                <i class="fas fa-user ms-3 me-2"></i>Creado por: Prof. García
+                            </p>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-light-modern btn-modern">
+                                <i class="fas fa-edit me-1"></i> Editar
+                            </button>
+                            <a th:if="${group.isChatEnabled}" th:href="@{/groups/{id}/chat(id=${group.id})}"
+                               class="btn btn-primary-modern btn-modern">
+                                <i class="fas fa-comments me-1"></i> Ir al Chat
+                            </a>
+                            <button th:unless="${group.isChatEnabled}" class="btn btn-outline-secondary btn-modern" disabled>
+                                <i class="fas fa-comments me-1"></i> Chat deshabilitado
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 fw-bold">8/15</h5>
+                                    <small class="text-muted">Miembros</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="stat-icon bg-success bg-opacity-10 text-success me-3">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 fw-bold">2</h5>
+                                    <small class="text-muted">Sesiones esta semana</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="stat-icon bg-warning bg-opacity-10 text-warning me-3">
+                                    <i class="fas fa-file"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 fw-bold">12</h5>
+                                    <small class="text-muted">Recursos compartidos</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                
+            <!-- Group Tabs -->
+            <div class="card-modern mb-4">
+                <div class="card-header-modern">
+                    <ul class="nav nav-tabs border-0" id="groupTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#overview" type="button">
+                                <i class="fas fa-info-circle me-2"></i>Información
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="members-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#members" type="button">
+                                <i class="fas fa-users me-2"></i>Miembros (8)
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="resources-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#resources" type="button">
+                                <i class="fas fa-book me-2"></i>Recursos (12)
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="sessions-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#sessions" type="button">
+                                <i class="fas fa-calendar me-2"></i>Sesiones
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body-modern">
+                    <div class="tab-content" id="groupTabContent">
+                        <!-- Overview Tab -->
+                        <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <!-- Description -->
+                                    <div class="card-modern mb-4">
+                                        <div class="card-header-modern">
+                                            <h5><i class="fas fa-file-alt me-2"></i>Descripción</h5>
+                                        </div>
+                                        <div class="card-body-modern">
+                                            <p>
+                                                Grupo dedicado al estudio de matemáticas avanzadas, 
+                                                específicamente cálculo diferencial e integral y álgebra lineal.
+                                                Nos reunimos dos veces por semana para resolver problemas,
+                                                compartir recursos y prepararnos para exámenes.
+                                            </p>
+                                            <p class="mb-0">
+                                                <strong>Objetivos:</strong>
+                                                <ul class="mb-0">
+                                                    <li>Dominar conceptos de cálculo</li>
+                                                    <li>Resolver problemas complejos</li>
+                                                    <li>Preparar exámenes finales</li>
+                                                    <li>Compartir materiales de estudio</li>
+                                                </ul>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Upcoming Session -->
+                                    <div class="card-modern">
+                                        <div class="card-header-modern">
+                                            <h5><i class="fas fa-calendar-check me-2"></i>Próxima Sesión</h5>
+                                        </div>
+                                        <div class="card-body-modern">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h5 class="mb-1 fw-bold">Cálculo Diferencial</h5>
+                                                    <p class="text-muted mb-2">
+                                                        <i class="fas fa-clock me-2"></i>Hoy, 14:30 - 16:30
+                                                    </p>
+                                                    <p class="mb-0">
+                                                        Repaso de derivadas y aplicaciones
+                                                    </p>
+                                                </div>
+                                                <button class="btn btn-primary-modern btn-modern">
+                                                    <i class="fas fa-video me-1"></i> Unirse
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <!-- Quick Actions -->
+                                    <div class="card-modern mb-4">
+                                        <div class="card-header-modern">
+                                            <h5><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h5>
+                                        </div>
+                                        <div class="card-body-modern">
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-light-modern btn-modern btn-sm">
+                                                    <i class="fas fa-comment me-1"></i> Enviar mensaje
+                                                </button>
+                                                <button class="btn btn-light-modern btn-modern btn-sm">
+                                                    <i class="fas fa-plus me-1"></i> Agendar sesión
+                                                </button>
+                                                <button class="btn btn-light-modern btn-modern btn-sm">
+                                                    <i class="fas fa-upload me-1"></i> Subir recurso
+                                                </button>
+                                                <button class="btn btn-light-modern btn-modern btn-sm">
+                                                    <i class="fas fa-user-plus me-1"></i> Invitar amigos
+                                                </button>
+                                                <button class="btn btn-outline-danger btn-sm">
+                                                    <i class="fas fa-sign-out-alt me-1"></i> Abandonar grupo
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Group Rules -->
+                                    <div class="card-modern">
+                                        <div class="card-header-modern">
+                                            <h5><i class="fas fa-gavel me-2"></i>Reglas del Grupo</h5>
+                                        </div>
+                                        <div class="card-body-modern">
+                                            <ul class="mb-0">
+                                                <li>Respeto entre miembros</li>
+                                                <li>Contenido académico únicamente</li>
+                                                <li>Puntualidad en sesiones</li>
+                                                <li>Participación activa</li>
+                                                <li>Compartir recursos útiles</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!-- Members Tab -->
+                        <div class="tab-pane fade" id="members" role="tabpanel">
+                            <div class="card-modern">
+                                <div class="card-header-modern d-flex justify-content-between align-items-center">
+                                    <h5><i class="fas fa-users me-2"></i>Miembros del Grupo (8)</h5>
+                                    <button class="btn btn-sm btn-primary-modern btn-modern">
+                                        <i class="fas fa-user-plus me-1"></i> Invitar
+                                    </button>
+                                </div>
+                                <div class="card-body-modern">
+                                    <div class="table-responsive">
+                                        <table class="table-modern table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Miembro</th>
+                                                    <th>Rol</th>
+                                                    <th>Unido el</th>
+                                                    <th>Actividad</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="user-avatar me-2" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                                                <span>PG</span>
+                                                            </div>
+                                                            <div>
+                                                                <strong>Prof. García</strong><br>
+                                                                <small class="text-muted">Líder</small>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td><span class="badge bg-danger badge-modern">Administrador</span></td>
+                                                    <td>15/01/2024</td>
+                                                    <td>Activo hoy</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-envelope"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="user-avatar me-2" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                                                <span>JP</span>
+                                                            </div>
+                                                            <div>
+                                                                <strong>Juan Pérez</strong><br>
+                                                                <small class="text-muted">Tú</small>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td><span class="badge bg-warning badge-modern">Moderador</span></td>
+                                                    <td>16/01/2024</td>
+                                                    <td>En línea</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="user-avatar me-2" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                                                <span>MG</span>
+                                                            </div>
+                                                            <div>
+                                                                <strong>María García</strong><br>
+                                                                <small class="text-muted">Miembro</small>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td><span class="badge bg-primary badge-modern">Miembro</span></td>
+                                                    <td>17/01/2024</td>
+                                                    <td>Activo ayer</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-envelope"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Resources Tab -->
+                        <div class="tab-pane fade" id="resources" role="tabpanel">
+                            <div class="card-modern">
+                                <div class="card-header-modern d-flex justify-content-between align-items-center">
+                                    <h5><i class="fas fa-book me-2"></i>Recursos Compartidos (12)</h5>
+                                    <button class="btn btn-sm btn-primary-modern btn-modern">
+                                        <i class="fas fa-upload me-1"></i> Subir Recurso
+                                    </button>
+                                </div>
+                                <div class="card-body-modern">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card-modern">
+                                                <div class="card-body-modern">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <h6 class="mb-0 fw-bold">Guía de Cálculo.pdf</h6>
+                                                        <span class="badge bg-success badge-modern">PDF</span>
+                                                    </div>
+                                                    <p class="text-muted small mb-2">
+                                                        <i class="fas fa-user me-1"></i> Subido por: Prof. García
+                                                    </p>
+                                                    <p class="small mb-3">
+                                                        Guía completa de cálculo diferencial e integral
+                                                    </p>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-download me-1"></i> 45 descargas
+                                                        </small>
+                                                        <div class="btn-group btn-group-sm">
+                                                            <button class="btn btn-outline-primary">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                            <button class="btn btn-outline-success">
+                                                                <i class="fas fa-download"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card-modern">
+                                                <div class="card-body-modern">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <h6 class="mb-0 fw-bold">Ejercicios Álgebra.xlsx</h6>
+                                                        <span class="badge bg-info badge-modern">Excel</span>
+                                                    </div>
+                                                    <p class="text-muted small mb-2">
+                                                        <i class="fas fa-user me-1"></i> Subido por: María García
+                                                    </p>
+                                                    <p class="small mb-3">
+                                                        Ejercicios resueltos de álgebra lineal
+                                                    </p>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-download me-1"></i> 28 descargas
+                                                        </small>
+                                                        <div class="btn-group btn-group-sm">
+                                                            <button class="btn btn-outline-primary">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                            <button class="btn btn-outline-success">
+                                                                <i class="fas fa-download"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sessions Tab -->
+                        <div class="tab-pane fade" id="sessions" role="tabpanel">
+                            <div class="card-modern">
+                                <div class="card-header-modern d-flex justify-content-between align-items-center">
+                                    <h5><i class="fas fa-calendar me-2"></i>Sesiones de Estudio</h5>
+                                    <button class="btn btn-sm btn-primary-modern btn-modern">
+                                        <i class="fas fa-plus me-1"></i> Nueva Sesión
+                                    </button>
+                                </div>
+                                <div class="card-body-modern">
+                                    <div class="table-responsive">
+                                        <table class="table-modern table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Título</th>
+                                                    <th>Fecha</th>
+                                                    <th>Hora</th>
+                                                    <th>Asistentes</th>
+                                                    <th>Estado</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Repaso Cálculo Diferencial</td>
+                                                    <td>Hoy</td>
+                                                    <td>14:30 - 16:30</td>
+                                                    <td>5/8</td>
+                                                    <td><span class="badge bg-success badge-modern">Programada</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success">
+                                                            <i class="fas fa-video"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Álgebra Lineal - Matrices</td>
+                                                    <td>Miércoles</td>
+                                                    <td>15:00 - 17:00</td>
+                                                    <td>-</td>
+                                                    <td><span class="badge bg-primary badge-modern">Próxima</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-calendar-plus"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sesión de Ejercicios</td>
+                                                    <td>Lunes (pasado)</td>
+                                                    <td>10:00 - 12:00</td>
+                                                    <td>7/8</td>
+                                                    <td><span class="badge bg-secondary badge-modern">Completada</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-info">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

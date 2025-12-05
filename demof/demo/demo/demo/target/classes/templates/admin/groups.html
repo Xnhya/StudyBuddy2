@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Grupos - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div th:replace="fragments/sidebar :: sidebar('admin')"></div>
+            
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Messages -->
+                <div th:replace="fragments/messages :: messages"></div>
+                
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-success">
+                            <i class="fas fa-users me-2"></i>Gestión de Grupos
+                        </h2>
+                        <p class="text-muted mb-0">Administra todos los grupos del sistema</p>
+                    </div>
+                    <button class="btn btn-success">
+                        <i class="fas fa-chart-bar me-2"></i> Estadísticas
+                    </button>
+                </div>
+                
+                <!-- Groups Table -->
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Lista de Grupos (42)</h5>
+                        <div class="input-group" style="width: 300px;">
+                            <input type="text" class="form-control" placeholder="Buscar grupo...">
+                            <button class="btn btn-outline-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Materia</th>
+                                        <th>Creador</th>
+                                        <th>Miembros</th>
+                                        <th>Estado</th>
+                                        <th>Creado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Group 1 -->
+                                    <tr>
+                                        <td>#001</td>
+                                        <td>
+                                            <strong>Matemáticas Avanzadas</strong><br>
+                                            <small class="text-muted">Grupo de cálculo</small>
+                                        </td>
+                                        <td>Matemáticas</td>
+                                        <td>Prof. García</td>
+                                        <td>
+                                            <span class="badge bg-info">8/15</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">Activo</span>
+                                        </td>
+                                        <td>15/01/2024</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Group 2 -->
+                                    <tr>
+                                        <td>#002</td>
+                                        <td>
+                                            <strong>Programación Java</strong><br>
+                                            <small class="text-muted">Spring Boot y APIs</small>
+                                        </td>
+                                        <td>Programación</td>
+                                        <td>juan_perez</td>
+                                        <td>
+                                            <span class="badge bg-info">5/20</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">Activo</span>
+                                        </td>
+                                        <td>16/01/2024</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Group 3 -->
+                                    <tr>
+                                        <td>#003</td>
+                                        <td>
+                                            <strong>Física Universitaria</strong><br>
+                                            <small class="text-muted">Mecánica clásica</small>
+                                        </td>
+                                        <td>Física</td>
+                                        <td>est_lopez</td>
+                                        <td>
+                                            <span class="badge bg-info">2/10</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">Inactivo</span>
+                                        </td>
+                                        <td>10/01/2024</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-success">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Group 4 -->
+                                    <tr>
+                                        <td>#004</td>
+                                        <td>
+                                            <strong>Química Orgánica</strong><br>
+                                            <small class="text-muted">Laboratorio virtual</small>
+                                        </td>
+                                        <td>Química</td>
+                                        <td>dra_rodriguez</td>
+                                        <td>
+                                            <span class="badge bg-info">12/25</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">Activo</span>
+                                        </td>
+                                        <td>18/01/2024</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Group 5 -->
+                                    <tr>
+                                        <td>#005</td>
+                                        <td>
+                                            <strong>Historia Universal</strong><br>
+                                            <small class="text-muted">Debates históricos</small>
+                                        </td>
+                                        <td>Historia</td>
+                                        <td>prof_martinez</td>
+                                        <td>
+                                            <span class="badge bg-info">6/15</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-warning">Reportado</span>
+                                        </td>
+                                        <td>17/01/2024</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-warning">
+                                                    <i class="fas fa-flag"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination pagination-sm justify-content-center mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Anterior</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                                <li class="page-item"><a class="page-link" href="#">5</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Siguiente</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                
+                <!-- Group Statistics -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-chart-pie me-2 text-primary"></i>Grupos por Materia
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Matemáticas</span>
+                                        <span>12 (29%)</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-primary" style="width: 29%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Programación</span>
+                                        <span>10 (24%)</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-success" style="width: 24%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Ciencias</span>
+                                        <span>8 (19%)</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-info" style="width: 19%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Humanidades</span>
+                                        <span>7 (17%)</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-warning" style="width: 17%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Otros</span>
+                                        <span>5 (11%)</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-secondary" style="width: 11%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-chart-line me-2 text-success"></i>Actividad de Grupos
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6 mb-3">
+                                        <div class="p-3 bg-light rounded">
+                                            <h3 class="fw-bold text-success">32</h3>
+                                            <p class="mb-0 text-muted">Grupos activos</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <div class="p-3 bg-light rounded">
+                                            <h3 class="fw-bold text-warning">10</h3>
+                                            <p class="mb-0 text-muted">Grupos inactivos</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 bg-light rounded">
+                                            <h3 class="fw-bold text-info">256</h3>
+                                            <p class="mb-0 text-muted">Total miembros</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 bg-light rounded">
+                                            <h3 class="fw-bold text-primary">15</h3>
+                                            <p class="mb-0 text-muted">Sesiones esta semana</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <div th:replace="fragments/footer :: footer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

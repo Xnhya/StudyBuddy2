@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - StudyBuddy</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Dashboard Styles -->
+    <link rel="stylesheet" th:href="@{/css/dashboard-styles.css}">
+    <!-- Custom CSS -->
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: bottom;
+        }
+        
+        .avatar-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+        
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            object-fit: cover;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #4361ee;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .profile-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            font-weight: 500;
+            padding: 1rem 1.5rem;
+        }
+        
+        .profile-tabs .nav-link.active {
+            color: #4361ee;
+            border-bottom: 3px solid #4361ee;
+            background: transparent;
+        }
+        
+        .info-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .badge-subject {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin: 0.25rem;
+            display: inline-block;
+        }
+        
+        .skill-level {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        
+        .skill-level-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+        }
+        
+        .achievement-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 12px;
+            background: #f8f9fa;
+            transition: transform 0.3s ease;
+        }
+        
+        .achievement-card:hover {
+            transform: translateY(-5px);
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .achievement-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar unificado -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-graduation-cap me-2"></i>StudyBuddy</h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <a th:href="@{/user/dashboard}" class="nav-link">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/groups}" class="nav-link">
+                        <i class="fas fa-users nav-icon"></i>
+                        Grupos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/user/resources}" class="nav-link">
+                        <i class="fas fa-book nav-icon"></i>
+                        Recursos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/user/search}" class="nav-link">
+                        <i class="fas fa-search nav-icon"></i>
+                        Buscar
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/api/currency}" class="nav-link">
+                        <i class="fas fa-money-bill-wave nav-icon"></i>
+                        Conversor
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a th:href="@{/user/profile}" class="nav-link active">
+                        <i class="fas fa-user nav-icon"></i>
+                        Perfil
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <span sec:authentication="name">U</span>
+                    </div>
+                    <div class="user-info">
+                        <h6 sec:authentication="name">Usuario</h6>
+                        <small>
+                            <span sec:authentication="principal.authorities">Usuario</span>
+                        </small>
+                    </div>
+                </div>
+                <div sec:authorize="isAuthenticated()" class="mt-3 border-top pt-3">
+                    <form th:action="@{/auth/logout}" method="post" id="profileLogoutForm">
+                        <button type="submit" class="btn btn-outline-danger w-100 text-start">
+                            <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="container position-relative">
+                        <div class="row align-items-center">
+                            <div class="col-lg-3 text-center mb-4 mb-lg-0">
+                                <div class="avatar-container">
+                                    <img src="https://ui-avatars.com/api/?name=Juan+Perez&background=4361ee&color=fff&size=150" 
+                                         alt="Avatar" class="avatar">
+                                    <button class="avatar-upload-btn" data-bs-toggle="modal" data-bs-target="#avatarModal">
+                                        <i class="fas fa-camera"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-lg-9">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h1 class="display-6 fw-bold mb-1" sec:authentication="name">Juan Pérez</h1>
+                                        <p class="lead mb-2">
+                                            <i class="fas fa-user-graduate me-2"></i>Estudiante de Ingeniería de Sistemas
+                                        </p>
+                                        <div class="mb-3">
+                                            <span class="badge bg-light text-dark me-2">
+                                                <i class="fas fa-star me-1"></i>Usuario Premium
+                                            </span>
+                                            <span class="badge bg-success me-2">
+                                                <i class="fas fa-check-circle me-1"></i>Verificado
+                                            </span>
+                                            <span class="badge bg-info">
+                                                <i class="fas fa-users me-1"></i>5 grupos
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-light me-2">
+                                            <i class="fas fa-edit me-1"></i> Editar
+                                        </button>
+                                        <button class="btn btn-outline-light">
+                                            <i class="fas fa-share-alt me-1"></i> Compartir
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-md-4">
+                                        <div class="text-center">
+                                            <h3 class="fw-bold mb-0">24.5</h3>
+                                            <p class="text-light-75 mb-0">Horas estudiadas</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="text-center">
+                                            <h3 class="fw-bold mb-0">7</h3>
+                                            <p class="text-light-75 mb-0">Recursos subidos</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="text-center">
+                                            <h3 class="fw-bold mb-0">89%</h3>
+                                            <p class="text-light-75 mb-0">Asistencia</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Messages Fragment -->
+                <div class="container mt-3">
+                    <div th:replace="fragments/messages :: messages"></div>
+                </div>
+                
+                <!-- Profile Tabs -->
+                <div class="container mt-4">
+                    <ul class="nav profile-tabs mb-4" id="profileTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="info-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#info" type="button">
+                                <i class="fas fa-info-circle me-2"></i>Información
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="academic-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#academic" type="button">
+                                <i class="fas fa-graduation-cap me-2"></i>Académico
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="settings-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#settings" type="button">
+                                <i class="fas fa-cog me-2"></i>Ajustes
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="activity-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#activity" type="button">
+                                <i class="fas fa-chart-line me-2"></i>Estadísticas
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="profileTabContent">
+                        <!-- Información Tab -->
+                        <div class="tab-pane fade show active" id="info" role="tabpanel">
+                            <div class="row">
+                                <!-- Left Column - Personal Info -->
+                                <div class="col-lg-8">
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-user-circle me-2 text-primary"></i>Información Personal
+                                            </h5>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <div class="info-item">
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <strong><i class="fas fa-user me-2"></i>Nombre completo:</strong>
+                                                    </div>
+                                                    <div class="col-sm-9" id="userFullName">
+                                                        <span class="text-muted">Cargando...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <strong><i class="fas fa-envelope me-2"></i>Email:</strong>
+                                                    </div>
+                                                    <div class="col-sm-9" id="userEmail">
+                                                        <span class="text-muted">Cargando...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <strong><i class="fas fa-calendar me-2"></i>Fecha registro:</strong>
+                                                    </div>
+                                                    <div class="col-sm-9" id="userCreatedAt">
+                                                        <span class="text-muted">Cargando...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="info-item" id="userGenderItem" style="display:none;">
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <strong><i class="fas fa-venus-mars me-2"></i>Género:</strong>
+                                                    </div>
+                                                    <div class="col-sm-9" id="userGender">
+                                                        -
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="info-item" id="userBirthDateItem" style="display:none;">
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <strong><i class="fas fa-birthday-cake me-2"></i>Fecha de Nacimiento:</strong>
+                                                    </div>
+                                                    <div class="col-sm-9" id="userBirthDate">
+                                                        -
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <strong><i class="fas fa-map-marker-alt me-2"></i>Ubicación:</strong>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        Lima, Perú
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <strong><i class="fas fa-phone me-2"></i>Teléfono:</strong>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        +51 987 654 321
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Bio Section -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-file-alt me-2 text-primary"></i>Biografía
+                                            </h5>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit me-1"></i> Editar
+                                            </button>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="mb-0">
+                                                Estudiante de Ingeniería de Sistemas en la Universidad Nacional. 
+                                                Apasionado por la programación, inteligencia artificial y el desarrollo web. 
+                                                Me encanta compartir conocimientos y aprender en grupo.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Right Column - Quick Stats -->
+                                <div class="col-lg-4">
+                                    <!-- Subjects of Interest -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-book me-2 text-warning"></i>Materias de Interés
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3" id="interestsContainer">
+                                                <span class="text-muted">Cargando materias...</span>
+                                            </div>
+                                            <button class="btn btn-outline-primary btn-sm w-100" onclick="showAddInterestModal()">
+                                                <i class="fas fa-plus me-1"></i> Agregar materia
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Skills -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-chart-bar me-2 text-success"></i>Habilidades
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span>Java</span>
+                                                    <span>85%</span>
+                                                </div>
+                                                <div class="skill-level">
+                                                    <div class="skill-level-bar" style="width: 85%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span>Spring Boot</span>
+                                                    <span>75%</span>
+                                                </div>
+                                                <div class="skill-level">
+                                                    <div class="skill-level-bar" style="width: 75%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span>JavaScript</span>
+                                                    <span>90%</span>
+                                                </div>
+                                                <div class="skill-level">
+                                                    <div class="skill-level-bar" style="width: 90%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span>MySQL</span>
+                                                    <span>80%</span>
+                                                </div>
+                                                <div class="skill-level">
+                                                    <div class="skill-level-bar" style="width: 80%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Social Links -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-share-alt me-2 text-info"></i>Enlaces Sociales
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <a href="#" class="btn btn-outline-primary">
+                                                    <i class="fab fa-github me-2"></i>GitHub
+                                                </a>
+                                                <a href="#" class="btn btn-outline-info">
+                                                    <i class="fab fa-linkedin me-2"></i>LinkedIn
+                                                </a>
+                                                <a href="#" class="btn btn-outline-warning">
+                                                    <i class="fab fa-twitter me-2"></i>Twitter
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Académico Tab -->
+                        <div class="tab-pane fade" id="academic" role="tabpanel">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <!-- Academic Info -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-university me-2 text-primary"></i>Información Académica
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-bold">Universidad</label>
+                                                    <p class="mb-0" id="academicUniversity">
+                                                        <span class="text-muted">No especificada</span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-bold">Carrera</label>
+                                                    <p class="mb-0" id="academicCareer">
+                                                        <span class="text-muted">No especificada</span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-bold">Semestre/Ciclo</label>
+                                                    <p class="mb-0" id="academicSemester">
+                                                        <span class="text-muted">No especificado</span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-bold">Promedio</label>
+                                                    <p class="mb-0">16.5/20</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <button class="btn btn-primary btn-sm" onclick="showEditAcademicForm()">
+                                                    <i class="fas fa-edit me-1"></i> Editar Información Académica
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Current Courses -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-book-open me-2 text-success"></i>Cursos Actuales
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Curso</th>
+                                                            <th>Profesor</th>
+                                                            <th>Horario</th>
+                                                            <th>Estado</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Desarrollo Web Avanzado</td>
+                                                            <td>Dr. García</td>
+                                                            <td>Lun/Mié 14:00-16:00</td>
+                                                            <td><span class="badge bg-success">En progreso</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Base de Datos II</td>
+                                                            <td>Ing. Rodríguez</td>
+                                                            <td>Mar/Jue 10:00-12:00</td>
+                                                            <td><span class="badge bg-success">En progreso</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Inteligencia Artificial</td>
+                                                            <td>Mg. López</td>
+                                                            <td>Vie 08:00-12:00</td>
+                                                            <td><span class="badge bg-warning">Próximo</span></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-4">
+                                    <!-- Achievements -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-trophy me-2 text-warning"></i>Logros
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-6 mb-3">
+                                                    <div class="achievement-card">
+                                                        <div class="achievement-icon">
+                                                            <i class="fas fa-fire"></i>
+                                                        </div>
+                                                        <h6 class="mb-0">Racha de 7 días</h6>
+                                                        <small class="text-muted">Estudio constante</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <div class="achievement-card">
+                                                        <div class="achievement-icon">
+                                                            <i class="fas fa-users"></i>
+                                                        </div>
+                                                        <h6 class="mb-0">Colaborador</h6>
+                                                        <small class="text-muted">5 grupos creados</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <div class="achievement-card">
+                                                        <div class="achievement-icon">
+                                                            <i class="fas fa-book"></i>
+                                                        </div>
+                                                        <h6 class="mb-0">Recursos Compartidos</h6>
+                                                        <small class="text-muted">10+ materiales</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <div class="achievement-card">
+                                                        <div class="achievement-icon">
+                                                            <i class="fas fa-star"></i>
+                                                        </div>
+                                                        <h6 class="mb-0">Estudiante Destacado</h6>
+                                                        <small class="text-muted">Top 10%</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Study Goals -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-bullseye me-2 text-danger"></i>Metas de Estudio
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <small>Horas semanales</small>
+                                                    <small>15/20</small>
+                                                </div>
+                                                <div class="skill-level">
+                                                    <div class="skill-level-bar" style="width: 75%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <small>Recursos compartidos</small>
+                                                    <small>7/10</small>
+                                                </div>
+                                                <div class="skill-level">
+                                                    <div class="skill-level-bar" style="width: 70%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <small>Sesiones asistidas</small>
+                                                    <small>8/10</small>
+                                                </div>
+                                                <div class="skill-level">
+                                                    <div class="skill-level-bar" style="width: 80%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ajustes Tab -->
+                        <div class="tab-pane fade" id="settings" role="tabpanel">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <!-- Account Settings -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-user-cog me-2 text-primary"></i>Configuración de Cuenta
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <form id="personalInfoForm" onsubmit="updatePersonalInfo(event)">
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-bold">Nombre</label>
+                                                        <input type="text" class="form-control" id="editFirstName" 
+                                                               placeholder="Nombre">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-bold">Apellido</label>
+                                                        <input type="text" class="form-control" id="editLastName" 
+                                                               placeholder="Apellido">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-bold">Email</label>
+                                                        <input type="email" class="form-control" id="editEmail" required>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="form-label fw-bold">Fecha de Nacimiento</label>
+                                                        <input type="date" class="form-control" id="editBirthDate">
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="form-label fw-bold">Género</label>
+                                                        <select class="form-select" id="editGender">
+                                                            <option value="">Seleccionar...</option>
+                                                            <option value="Masculino">Masculino</option>
+                                                            <option value="Femenino">Femenino</option>
+                                                            <option value="Otro">Otro</option>
+                                                            <option value="Prefiero no decir">Prefiero no decir</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="fas fa-save me-1"></i> Guardar Cambios
+                                                    </button>
+                                                </div>
+                                            </form>
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Cambiar contraseña</label>
+                                                    <div class="row">
+                                                        <div class="col-md-4 mb-2">
+                                                            <input type="password" class="form-control" placeholder="Contraseña actual">
+                                                        </div>
+                                                        <div class="col-md-4 mb-2">
+                                                            <input type="password" class="form-control" placeholder="Nueva contraseña">
+                                                        </div>
+                                                        <div class="col-md-4 mb-2">
+                                                            <input type="password" class="form-control" placeholder="Confirmar contraseña">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Idioma preferido</label>
+                                                    <select class="form-select">
+                                                        <option selected>Español</option>
+                                                        <option>English</option>
+                                                        <option>Português</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Zona horaria</label>
+                                                    <select class="form-select">
+                                                        <option selected>GMT-5 (Lima, Bogotá)</option>
+                                                        <option>GMT-6 (Ciudad de México)</option>
+                                                        <option>GMT-3 (Buenos Aires)</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="d-flex justify-content-end">
+                                                    <button type="button" class="btn btn-primary">
+                                                        <i class="fas fa-save me-2"></i>Guardar cambios
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Notification Settings -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-bell me-2 text-warning"></i>Configuración de Notificaciones
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="notifyEmail" checked>
+                                                <label class="form-check-label" for="notifyEmail">
+                                                    Recibir notificaciones por email
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="notifyGroup" checked>
+                                                <label class="form-check-label" for="notifyGroup">
+                                                    Notificaciones de actividad en grupos
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="notifySession" checked>
+                                                <label class="form-check-label" for="notifySession">
+                                                    Recordatorios de sesiones
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="notifyResource">
+                                                <label class="form-check-label" for="notifyResource">
+                                                    Nuevos recursos en grupos
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-4">
+                                    <!-- Privacy Settings -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-shield-alt me-2 text-success"></i>Privacidad
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="privacyProfile" checked>
+                                                <label class="form-check-label" for="privacyProfile">
+                                                    Perfil público
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="privacyGroups">
+                                                <label class="form-check-label" for="privacyGroups">
+                                                    Mostrar mis grupos
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="privacyActivity" checked>
+                                                <label class="form-check-label" for="privacyActivity">
+                                                    Mostrar actividad reciente
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="privacySearch" checked>
+                                                <label class="form-check-label" for="privacySearch">
+                                                    Aparecer en búsquedas
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Danger Zone -->
+                                    <div class="card info-card border-danger">
+                                        <div class="card-header bg-white border-danger py-3">
+                                            <h5 class="mb-0 text-danger">
+                                                <i class="fas fa-exclamation-triangle me-2"></i>Zona de Peligro
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted small mb-3">
+                                                Estas acciones son irreversibles. Por favor procede con cuidado.
+                                            </p>
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-outline-danger">
+                                                    <i class="fas fa-file-export me-2"></i>Exportar mis datos
+                                                </button>
+                                                <button class="btn btn-outline-danger">
+                                                    <i class="fas fa-user-slash me-2"></i>Desactivar cuenta
+                                                </button>
+                                                <button class="btn btn-danger">
+                                                    <i class="fas fa-trash-alt me-2"></i>Eliminar cuenta permanentemente
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Estadísticas Tab -->
+                        <div class="tab-pane fade" id="activity" role="tabpanel">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <!-- Study Statistics -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-chart-area me-2 text-primary"></i>Estadísticas de Estudio
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row text-center mb-4">
+                                                <div class="col-md-3 mb-3">
+                                                    <div class="p-3 bg-light rounded">
+                                                        <h3 class="fw-bold text-primary">24.5</h3>
+                                                        <p class="mb-0 text-muted">Horas totales</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 mb-3">
+                                                    <div class="p-3 bg-light rounded">
+                                                        <h3 class="fw-bold text-success">3.5</h3>
+                                                        <p class="mb-0 text-muted">Promedio diario</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 mb-3">
+                                                    <div class="p-3 bg-light rounded">
+                                                        <h3 class="fw-bold text-warning">7</h3>
+                                                        <p class="mb-0 text-muted">Días consecutivos</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 mb-3">
+                                                    <div class="p-3 bg-light rounded">
+                                                        <h3 class="fw-bold text-info">89%</h3>
+                                                        <p class="mb-0 text-muted">Eficiencia</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-md-6 mb-4">
+                                                    <h6 class="mb-3">Distribución por materia</h6>
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="me-3" style="width: 20px; height: 20px; background: #4361ee;"></div>
+                                                        <div class="flex-grow-1">
+                                                            <div class="d-flex justify-content-between">
+                                                                <span>Matemáticas</span>
+                                                                <span>8h (33%)</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="me-3" style="width: 20px; height: 20px; background: #3a0ca3;"></div>
+                                                        <div class="flex-grow-1">
+                                                            <div class="d-flex justify-content-between">
+                                                                <span>Programación</span>
+                                                                <span>7h (29%)</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="me-3" style="width: 20px; height: 20px; background: #4cc9f0;"></div>
+                                                        <div class="flex-grow-1">
+                                                            <div class="d-flex justify-content-between">
+                                                                <span>Base de Datos</span>
+                                                                <span>5h (20%)</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="me-3" style="width: 20px; height: 20px; background: #f72585;"></div>
+                                                        <div class="flex-grow-1">
+                                                            <div class="d-flex justify-content-between">
+                                                                <span>Otros</span>
+                                                                <span>4.5h (18%)</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-md-6">
+                                                    <h6 class="mb-3">Actividad por día de la semana</h6>
+                                                    <div class="mb-2">
+                                                        <div class="d-flex justify-content-between mb-1">
+                                                            <small>Lunes</small>
+                                                            <small>3.2h</small>
+                                                        </div>
+                                                        <div class="skill-level">
+                                                            <div class="skill-level-bar" style="width: 64%"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <div class="d-flex justify-content-between mb-1">
+                                                            <small>Martes</small>
+                                                            <small>4.1h</small>
+                                                        </div>
+                                                        <div class="skill-level">
+                                                            <div class="skill-level-bar" style="width: 82%"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <div class="d-flex justify-content-between mb-1">
+                                                            <small>Miércoles</small>
+                                                            <small>3.8h</small>
+                                                        </div>
+                                                        <div class="skill-level">
+                                                            <div class="skill-level-bar" style="width: 76%"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <div class="d-flex justify-content-between mb-1">
+                                                            <small>Jueves</small>
+                                                            <small>4.5h</small>
+                                                        </div>
+                                                        <div class="skill-level">
+                                                            <div class="skill-level-bar" style="width: 90%"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <div class="d-flex justify-content-between mb-1">
+                                                            <small>Viernes</small>
+                                                            <small>2.5h</small>
+                                                        </div>
+                                                        <div class="skill-level">
+                                                            <div class="skill-level-bar" style="width: 50%"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="d-flex justify-content-between mb-1">
+                                                            <small>Sábado</small>
+                                                            <small>3.4h</small>
+                                                        </div>
+                                                        <div class="skill-level">
+                                                            <div class="skill-level-bar" style="width: 68%"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-4">
+                                    <!-- Session History -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-history me-2 text-info"></i>Historial de Sesiones
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="list-group list-group-flush">
+                                                <div class="list-group-item border-0 px-0 py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <h6 class="mb-0">Cálculo Diferencial</h6>
+                                                            <small class="text-muted">Ayer, 14:00-16:00</small>
+                                                        </div>
+                                                        <span class="badge bg-success">Asistió</span>
+                                                    </div>
+                                                </div>
+                                                <div class="list-group-item border-0 px-0 py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <h6 class="mb-0">Programación Java</h6>
+                                                            <small class="text-muted">15 Ene, 10:00-12:00</small>
+                                                        </div>
+                                                        <span class="badge bg-success">Asistió</span>
+                                                    </div>
+                                                </div>
+                                                <div class="list-group-item border-0 px-0 py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <h6 class="mb-0">Álgebra Lineal</h6>
+                                                            <small class="text-muted">12 Ene, 09:00-11:00</small>
+                                                        </div>
+                                                        <span class="badge bg-warning">Tardío</span>
+                                                    </div>
+                                                </div>
+                                                <div class="list-group-item border-0 px-0 py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <h6 class="mb-0">Base de Datos</h6>
+                                                            <small class="text-muted">10 Ene, 16:00-18:00</small>
+                                                        </div>
+                                                        <span class="badge bg-danger">Ausente</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Performance Metrics -->
+                                    <div class="card info-card">
+                                        <div class="card-header bg-white border-0 py-3">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-chart-pie me-2 text-warning"></i>Métricas de Desempeño
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="text-center">
+                                                <div class="position-relative d-inline-block">
+                                                    <div class="circle-progress" 
+                                                         style="width: 120px; height: 120px;"
+                                                         data-percent="78">
+                                                        <span class="percent">78%</span>
+                                                    </div>
+                                                </div>
+                                                <h5 class="mt-3">Desempeño General</h5>
+                                                <p class="text-muted mb-0">Basado en asistencia, participación y aportes</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </main>
+    </div>
+    
+    <!-- Add Interest Modal -->
+    <div class="modal fade" id="addInterestModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus me-2"></i>Agregar Materia de Interés
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Buscar materia</label>
+                        <input type="text" class="form-control" id="searchInterest" 
+                               placeholder="Escribe para buscar..." onkeyup="searchAvailableInterests()">
+                    </div>
+                    <div id="availableInterestsList" style="max-height: 400px; overflow-y: auto;">
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-spinner fa-spin me-2"></i>Cargando materias disponibles...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Avatar Modal -->
+    <div class="modal fade" id="avatarModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cambiar Foto de Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <img src="https://ui-avatars.com/api/?name=Juan+Perez&background=4361ee&color=fff&size=200" 
+                             alt="Avatar" class="rounded-circle" style="width: 200px; height: 200px;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Subir nueva imagen</label>
+                        <input class="form-control" type="file" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">O usar avatar predeterminado</label>
+                        <div class="d-flex justify-content-around">
+                            <button class="btn btn-outline-primary btn-sm">A</button>
+                            <button class="btn btn-outline-primary btn-sm">B</button>
+                            <button class="btn btn-outline-primary btn-sm">C</button>
+                            <button class="btn btn-outline-primary btn-sm">D</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Guardar cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom Script -->
+    <script>
+        let userData = null;
+        
+        // Cargar datos del usuario al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserProfile();
+            
+            // Circle Progress Animation
+            const circleProgress = document.querySelector('.circle-progress');
+            if (circleProgress) {
+                const percent = circleProgress.getAttribute('data-percent');
+                const span = circleProgress.querySelector('.percent');
+                
+                let current = 0;
+                const interval = setInterval(() => {
+                    if (current >= percent) {
+                        clearInterval(interval);
+                        return;
+                    }
+                    current++;
+                    span.textContent = current + '%';
+                    const deg = (current / 100) * 360;
+                    circleProgress.style.background = `conic-gradient(#4361ee ${deg}deg, #e9ecef ${deg}deg)`;
+                }, 20);
+            }
+        });
+        
+        // Cargar perfil del usuario desde la API
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/api/users/profile');
+                if (!response.ok) {
+                    throw new Error('Error al cargar el perfil');
+                }
+                const data = await response.json();
+                userData = data.user;
+                
+                // Actualizar información personal
+                document.getElementById('userFullName').textContent = userData.fullName || userData.username || 'Sin nombre';
+                document.getElementById('userEmail').innerHTML = userData.email || 'Sin email';
+                
+                if (userData.createdAt) {
+                    const date = new Date(userData.createdAt);
+                    document.getElementById('userCreatedAt').textContent = date.toLocaleDateString('es-ES', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                }
+                
+                // Información adicional
+                if (userData.gender) {
+                    document.getElementById('userGender').textContent = userData.gender;
+                    document.getElementById('userGenderItem').style.display = 'block';
+                }
+                
+                if (userData.birthDate) {
+                    const birthDate = new Date(userData.birthDate);
+                    document.getElementById('userBirthDate').textContent = birthDate.toLocaleDateString('es-ES');
+                    document.getElementById('userBirthDateItem').style.display = 'block';
+                }
+                
+                // Información académica
+                document.getElementById('academicUniversity').textContent = userData.university || 'No especificada';
+                document.getElementById('academicCareer').textContent = userData.career || 'No especificada';
+                document.getElementById('academicSemester').textContent = userData.semester ? `${userData.semester}° ciclo` : 'No especificado';
+                
+                // Actualizar formulario de edición personal
+                if (document.getElementById('editFirstName')) {
+                    document.getElementById('editFirstName').value = userData.firstName || '';
+                    document.getElementById('editLastName').value = userData.lastName || '';
+                    document.getElementById('editEmail').value = userData.email || '';
+                    document.getElementById('editBirthDate').value = userData.birthDate || '';
+                    document.getElementById('editGender').value = userData.gender || '';
+                }
+                
+                // Cargar intereses del usuario
+                loadUserInterests();
+                
+                // Actualizar header del perfil
+                const headerName = document.querySelector('.profile-header h1');
+                if (headerName) {
+                    headerName.textContent = userData.fullName || userData.username;
+                }
+                
+            } catch (error) {
+                console.error('Error cargando perfil:', error);
+                showMessage('Error al cargar el perfil. Por favor recarga la página.', 'danger');
+            }
+        }
+        
+        // Cargar intereses del usuario
+        async function loadUserInterests() {
+            try {
+                const response = await fetch('/api/users/interests');
+                if (!response.ok) throw new Error('Error al cargar intereses');
+                
+                const data = await response.json();
+                const container = document.getElementById('interestsContainer');
+                
+                if (data.interests && data.interests.length > 0) {
+                    container.innerHTML = data.interests.map(interest => `
+                        <span class="badge-subject me-2 mb-2" style="cursor: pointer;" 
+                              onclick="removeInterest(${interest.id})" 
+                              title="Click para eliminar">
+                            ${escapeHtml(interest.name)}
+                            <i class="fas fa-times ms-1"></i>
+                        </span>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<span class="text-muted">No tienes materias agregadas aún</span>';
+                }
+            } catch (error) {
+                console.error('Error cargando intereses:', error);
+                document.getElementById('interestsContainer').innerHTML = 
+                    '<span class="text-danger">Error al cargar materias</span>';
+            }
+        }
+        
+        // Mostrar modal para agregar materias
+        async function showAddInterestModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addInterestModal'));
+            modal.show();
+            await loadAvailableInterests();
+        }
+        
+        // Cargar materias disponibles
+        async function loadAvailableInterests(searchTerm = '') {
+            try {
+                const response = await fetch('/api/users/interests/available');
+                if (!response.ok) throw new Error('Error al cargar materias disponibles');
+                
+                const data = await response.json();
+                const container = document.getElementById('availableInterestsList');
+                
+                let interests = data.interests || [];
+                
+                // Filtrar por término de búsqueda
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    interests = interests.filter(i => 
+                        i.name.toLowerCase().includes(term) || 
+                        i.category.toLowerCase().includes(term)
+                    );
+                }
+                
+                if (interests.length > 0) {
+                    container.innerHTML = interests.map(interest => `
+                        <div class="card mb-2">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0">${escapeHtml(interest.name)}</h6>
+                                    <small class="text-muted">${escapeHtml(interest.category)}</small>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="addInterest(${interest.id})">
+                                    <i class="fas fa-plus me-1"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="text-center text-muted py-3">No hay materias disponibles</div>';
+                }
+            } catch (error) {
+                console.error('Error cargando materias disponibles:', error);
+                document.getElementById('availableInterestsList').innerHTML = 
+                    '<div class="text-center text-danger py-3">Error al cargar materias</div>';
+            }
+        }
+        
+        // Buscar materias disponibles
+        function searchAvailableInterests() {
+            const searchTerm = document.getElementById('searchInterest').value;
+            loadAvailableInterests(searchTerm);
+        }
+        
+        // Agregar interés
+        async function addInterest(interestId) {
+            try {
+                const response = await fetch(`/api/users/interests/${interestId}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('Materia agregada correctamente', 'success');
+                    await loadUserInterests();
+                    await loadAvailableInterests(document.getElementById('searchInterest').value);
+                } else {
+                    showMessage('Error: ' + data.message, 'danger');
+                }
+            } catch (error) {
+                console.error('Error agregando interés:', error);
+                showMessage('Error al agregar la materia', 'danger');
+            }
+        }
+        
+        // Eliminar interés
+        async function removeInterest(interestId) {
+            if (!confirm('¿Estás seguro de que quieres eliminar esta materia?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/users/interests/${interestId}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('Materia eliminada correctamente', 'success');
+                    await loadUserInterests();
+                } else {
+                    showMessage('Error: ' + data.message, 'danger');
+                }
+            } catch (error) {
+                console.error('Error eliminando interés:', error);
+                showMessage('Error al eliminar la materia', 'danger');
+            }
+        }
+        
+        // Función auxiliar para escapar HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Mostrar formulario de edición académica
+        function showEditAcademicForm() {
+            const formHtml = `
+                <form id="editAcademicForm" onsubmit="updateAcademicInfo(event)">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Universidad</label>
+                            <input type="text" class="form-control" id="editUniversity" 
+                                   value="${userData?.university || ''}" placeholder="Ej: Universidad Nacional">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Carrera</label>
+                            <input type="text" class="form-control" id="editCareer" 
+                                   value="${userData?.career || ''}" placeholder="Ej: Ingeniería de Sistemas">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Semestre/Ciclo</label>
+                            <input type="number" class="form-control" id="editSemester" 
+                                   value="${userData?.semester || ''}" min="1" max="20" placeholder="Ej: 5">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-save me-1"></i> Guardar Cambios
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEditAcademic()">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            `;
+            
+            const cardBody = document.querySelector('#academic .card-body');
+            const currentContent = cardBody.innerHTML;
+            cardBody.innerHTML = formHtml;
+            cardBody.dataset.originalContent = currentContent;
+        }
+        
+        // Cancelar edición académica
+        function cancelEditAcademic() {
+            const cardBody = document.querySelector('#academic .card-body');
+            if (cardBody.dataset.originalContent) {
+                cardBody.innerHTML = cardBody.dataset.originalContent;
+                delete cardBody.dataset.originalContent;
+            }
+        }
+        
+        // Actualizar información académica
+        async function updateAcademicInfo(event) {
+            event.preventDefault();
+            
+            const updates = {
+                university: document.getElementById('editUniversity').value.trim(),
+                career: document.getElementById('editCareer').value.trim(),
+                semester: document.getElementById('editSemester').value.trim()
+            };
+            
+            // Remover campos vacíos
+            Object.keys(updates).forEach(key => {
+                if (!updates[key]) delete updates[key];
+            });
+            
+            try {
+                const response = await fetch('/api/users/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updates)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Error al actualizar');
+                }
+                
+                const data = await response.json();
+                showMessage('Información académica actualizada correctamente', 'success');
+                
+                // Recargar datos
+                await loadUserProfile();
+                
+                // Restaurar vista normal
+                cancelEditAcademic();
+                
+            } catch (error) {
+                console.error('Error actualizando:', error);
+                showMessage('Error al actualizar la información: ' + error.message, 'danger');
+            }
+        }
+        
+        // Actualizar información personal
+        async function updatePersonalInfo(event) {
+            event.preventDefault();
+            
+            const updates = {
+                firstName: document.getElementById('editFirstName')?.value.trim(),
+                lastName: document.getElementById('editLastName')?.value.trim(),
+                email: document.getElementById('editEmail')?.value.trim(),
+                birthDate: document.getElementById('editBirthDate')?.value,
+                gender: document.getElementById('editGender')?.value
+            };
+            
+            // Remover campos vacíos
+            Object.keys(updates).forEach(key => {
+                if (!updates[key]) delete updates[key];
+            });
+            
+            try {
+                const response = await fetch('/api/users/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updates)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Error al actualizar');
+                }
+                
+                showMessage('Información personal actualizada correctamente', 'success');
+                await loadUserProfile();
+                
+            } catch (error) {
+                console.error('Error actualizando:', error);
+                showMessage('Error al actualizar: ' + error.message, 'danger');
+            }
+        }
+        
+        // Mostrar mensaje
+        function showMessage(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const container = document.querySelector('.container.mt-3');
+            if (container) {
+                container.insertBefore(alertDiv, container.firstChild);
+                
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

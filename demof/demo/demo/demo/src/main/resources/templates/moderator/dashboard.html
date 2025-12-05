@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Moderador - StudyBuddy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-light: #eef2ff;
+            --secondary-color: #3a0ca3;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --success-color: #10b981;
+            --info-color: #06b6d4;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --gray-color: #64748b;
+            --border-color: #e2e8f0;
+        }
+        
+        body {
+            background-color: #f9fafb;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--dark-color);
+        }
+        
+        /* Layout principal */
+        .moderator-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar mejorado para moderador */
+        .moderator-sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .sidebar-header h3 {
+            color: white;
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-header h3 i {
+            color: var(--info-color);
+            margin-right: 10px;
+        }
+        
+        .moderator-nav {
+            flex: 1;
+            padding: 1.5rem 0;
+        }
+        
+        .moderator-nav-item {
+            margin-bottom: 0.25rem;
+        }
+        
+        .moderator-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+        
+        .moderator-nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+            color: white;
+            border-left-color: var(--info-color);
+        }
+        
+        .moderator-nav-link.active {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--info-color);
+            font-weight: 600;
+        }
+        
+        .moderator-nav-icon {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .moderator-profile {
+            display: flex;
+            align-items: center;
+        }
+        
+        .moderator-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--info-color), #0891b2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .moderator-info h6 {
+            margin: 0;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .moderator-info small {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.8rem;
+        }
+        
+        .moderator-badge {
+            background: var(--info-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        /* Contenido principal */
+        .moderator-main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        
+        /* Header mejorado */
+        .moderator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .moderator-title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .moderator-title h1 i {
+            color: var(--info-color);
+            margin-right: 12px;
+            background: var(--primary-light);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .moderator-title p {
+            color: var(--gray-color);
+            margin: 0;
+            font-size: 1rem;
+        }
+        
+        .moderator-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        /* Stats mejoradas */
+        .moderator-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .moderator-stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .moderator-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .moderator-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        
+        .stat-danger::before { background: linear-gradient(90deg, var(--danger-color), #dc2626); }
+        .stat-warning::before { background: linear-gradient(90deg, var(--warning-color), #d97706); }
+        .stat-success::before { background: linear-gradient(90deg, var(--success-color), #059669); }
+        .stat-primary::before { background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .icon-danger { background: linear-gradient(135deg, var(--danger-color), #dc2626); }
+        .icon-warning { background: linear-gradient(135deg, var(--warning-color), #d97706); }
+        .icon-success { background: linear-gradient(135deg, var(--success-color), #059669); }
+        .icon-primary { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
+        
+        .stat-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-content h5 {
+            color: var(--gray-color);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-trend {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .trend-success { background-color: rgba(16, 185, 129, 0.1); color: var(--success-color); }
+        
+        /* Grid de contenido */
+        .moderator-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (max-width: 992px) {
+            .moderator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Tarjetas mejoradas */
+        .moderator-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            overflow: hidden;
+        }
+        
+        .moderator-card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .moderator-card-header h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .moderator-card-header h3 i {
+            margin-right: 10px;
+            color: var(--info-color);
+        }
+        
+        .moderator-card-body {
+            padding: 1.5rem;
+        }
+        
+        /* Quick actions mejoradas */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .moderator-action-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .moderator-action-card:hover {
+            border-color: var(--info-color);
+            box-shadow: 0 6px 16px rgba(6, 182, 212, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        .action-icon-wrapper {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .action-info h6 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--dark-color);
+        }
+        
+        .action-info p {
+            color: var(--gray-color);
+            font-size: 0.875rem;
+            margin: 0;
+        }
+        
+        /* Tabla de reportes mejorada */
+        .reports-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .reports-table thead th {
+            background-color: #f8fafc;
+            color: var(--gray-color);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1rem 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .reports-table tbody tr {
+            transition: background-color 0.2s;
+        }
+        
+        .reports-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .reports-table tbody td {
+            padding: 1rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        
+        .priority-badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .priority-high { background-color: rgba(239, 68, 68, 0.1); color: var(--danger-color); }
+        .priority-medium { background-color: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+        .priority-low { background-color: rgba(6, 182, 212, 0.1); color: var(--info-color); }
+        
+        /* Alertas mejoradas */
+        .moderator-alerts {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .alert-card {
+            padding: 1rem;
+            border-radius: 12px;
+            border-left: 4px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .alert-danger { border-left-color: var(--danger-color); background: linear-gradient(90deg, rgba(239, 68, 68, 0.05), white); }
+        .alert-warning { border-left-color: var(--warning-color); background: linear-gradient(90deg, rgba(245, 158, 11, 0.05), white); }
+        .alert-info { border-left-color: var(--info-color); background: linear-gradient(90deg, rgba(6, 182, 212, 0.05), white); }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-content strong {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        /* Herramientas de moderación */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .tool-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background: white;
+            color: var(--dark-color);
+            transition: all 0.2s;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .tool-btn:hover {
+            background: #f8fafc;
+            border-color: var(--info-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        
+        .tool-btn i {
+            margin-right: 8px;
+            color: var(--info-color);
+        }
+        
+        /* Estadísticas mejoradas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .stat-box {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--gray-color);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        /* Botones mejorados */
+        .btn-modern {
+            padding: 0.625rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-info-modern {
+            background: var(--info-color);
+            color: white;
+        }
+        
+        .btn-info-modern:hover {
+            background: #0891b2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(6, 182, 212, 0.3);
+        }
+        
+        .btn-outline-info-modern {
+            background: white;
+            color: var(--info-color);
+            border: 1px solid var(--info-color);
+        }
+        
+        .btn-outline-info-modern:hover {
+            background: rgba(6, 182, 212, 0.1);
+            border-color: #0891b2;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .moderator-container {
+                flex-direction: column;
+            }
+            
+            .moderator-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            
+            .moderator-main {
+                padding: 1.5rem;
+            }
+            
+            .moderator-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .moderator-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .moderator-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="moderator-container">
+        <!-- Sidebar para moderador -->
+        <aside class="moderator-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-shield-alt"></i>Moderador</h3>
+            </div>
+            
+            <nav class="moderator-nav">
+                <div class="moderator-nav-item">
+                    <a href="#" class="moderator-nav-link active">
+                        <i class="fas fa-tachometer-alt moderator-nav-icon"></i>
+                        Panel Principal
+                    </a>
+                </div>
+                <div class="moderator-nav-item">
+                    <a th:href="@{/moderator/content}" class="moderator-nav-link">
+                        <i class="fas fa-flag moderator-nav-icon"></i>
+                        Reportes
+                        <span class="moderator-badge">5</span>
+                    </a>
+                </div>
+                <div class="moderator-nav-item">
+                    <a href="#" class="moderator-nav-link">
+                        <i class="fas fa-user-shield moderator-nav-icon"></i>
+                        Usuarios Reportados
+                        <span class="moderator-badge">3</span>
+                    </a>
+                </div>
+                <div class="moderator-nav-item">
+                    <a href="#" class="moderator-nav-link">
+                        <i class="fas fa-comments moderator-nav-icon"></i>
+                        Moderar Comentarios
+                    </a>
+                </div>
+                <div class="moderator-nav-item">
+                    <a href="#" class="moderator-nav-link">
+                        <i class="fas fa-file-alt moderator-nav-icon"></i>
+                        Generar Reportes
+                    </a>
+                </div>
+                <div class="moderator-nav-item">
+                    <a href="#" class="moderator-nav-link">
+                        <i class="fas fa-cog moderator-nav-icon"></i>
+                        Configuración
+                    </a>
+                </div>
+                <div class="moderator-nav-item">
+                    <a href="#" class="moderator-nav-link">
+                        <i class="fas fa-question-circle moderator-nav-icon"></i>
+                        Ayuda
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="moderator-profile">
+                    <div class="moderator-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="moderator-info">
+                        <h6>Moderador</h6>
+                        <small>Panel de Administración</small>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Contenido principal -->
+        <main class="moderator-main">
+            <!-- Header -->
+            <header class="moderator-header">
+                <div class="moderator-title">
+                    <h1>
+                        <i class="fas fa-shield-alt"></i>
+                        Panel de Moderación
+                    </h1>
+                    <p>Modera contenido y gestiona reportes de forma eficiente</p>
+                </div>
+                
+                <div class="moderator-actions">
+                    <button class="btn btn-outline-info-modern btn-modern">
+                        <i class="fas fa-sync-alt me-2"></i> Actualizar
+                    </button>
+                    <button class="btn btn-info-modern btn-modern">
+                        <i class="fas fa-question-circle me-2"></i> Ayuda
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Stats -->
+            <div class="moderator-stats">
+                <div class="moderator-stat-card stat-danger">
+                    <div class="stat-header">
+                        <div class="stat-content">
+                            <h3 class="text-danger">5</h3>
+                            <h5>Reportes Pendientes</h5>
+                            <span class="stat-trend">
+                                <i class="fas fa-exclamation-circle me-1"></i> 3 sin revisar
+                            </span>
+                        </div>
+                        <div class="stat-icon icon-danger">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="moderator-stat-card stat-warning">
+                    <div class="stat-header">
+                        <div class="stat-content">
+                            <h3 class="text-warning">3</h3>
+                            <h5>Usuarios Reportados</h5>
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i> 1 advertencia pendiente
+                            </small>
+                        </div>
+                        <div class="stat-icon icon-warning">
+                            <i class="fas fa-user-slash"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="moderator-stat-card stat-success">
+                    <div class="stat-header">
+                        <div class="stat-content">
+                            <h3 class="text-success">8</h3>
+                            <h5>Resueltos Hoy</h5>
+                            <span class="stat-trend trend-success">
+                                <i class="fas fa-arrow-up me-1"></i> +2 que ayer
+                            </span>
+                        </div>
+                        <div class="stat-icon icon-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="moderator-stat-card stat-primary">
+                    <div class="stat-header">
+                        <div class="stat-content">
+                            <h3 class="text-primary">89%</h3>
+                            <h5>Actividad</h5>
+                            <small class="text-success">
+                                <i class="fas fa-check-circle me-1"></i> Activo
+                            </small>
+                        </div>
+                        <div class="stat-icon icon-primary">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Grid principal -->
+            <div class="moderator-grid">
+                <!-- Columna izquierda -->
+                <div class="left-column">
+                    <!-- Acciones rápidas -->
+                    <div class="moderator-card mb-4">
+                        <div class="moderator-card-header">
+                            <h3><i class="fas fa-bolt"></i> Acciones Rápidas</h3>
+                        </div>
+                        <div class="moderator-card-body">
+                            <div class="quick-actions-grid">
+                                <a th:href="@{/moderator/content}" class="moderator-action-card">
+                                    <div class="action-icon-wrapper" style="background: linear-gradient(135deg, var(--info-color), #0891b2);">
+                                        <i class="fas fa-flag"></i>
+                                    </div>
+                                    <div class="action-info">
+                                        <h6>Revisar Reportes</h6>
+                                        <p>Gestiona reportes pendientes</p>
+                                    </div>
+                                </a>
+                                
+                                <button class="moderator-action-card">
+                                    <div class="action-icon-wrapper" style="background: linear-gradient(135deg, var(--warning-color), #d97706);">
+                                        <i class="fas fa-user-shield"></i>
+                                    </div>
+                                    <div class="action-info">
+                                        <h6>Usuarios Reportados</h6>
+                                        <p>Administra usuarios en observación</p>
+                                    </div>
+                                </button>
+                                
+                                <button class="moderator-action-card">
+                                    <div class="action-icon-wrapper" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">
+                                        <i class="fas fa-comments"></i>
+                                    </div>
+                                    <div class="action-info">
+                                        <h6>Moderar Comentarios</h6>
+                                        <p>Revisa contenido inapropiado</p>
+                                    </div>
+                                </button>
+                                
+                                <button class="moderator-action-card">
+                                    <div class="action-icon-wrapper" style="background: linear-gradient(135deg, var(--success-color), #059669);">
+                                        <i class="fas fa-file-alt"></i>
+                                    </div>
+                                    <div class="action-info">
+                                        <h6>Generar Reporte</h6>
+                                        <p>Crea informes de actividad</p>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reportes recientes -->
+                    <div class="moderator-card">
+                        <div class="moderator-card-header">
+                            <h3><i class="fas fa-history"></i> Reportes Recientes</h3>
+                            <a th:href="@{/moderator/content}" class="btn btn-info-modern btn-modern btn-sm">
+                                Ver todos
+                            </a>
+                        </div>
+                        <div class="moderator-card-body">
+                            <div class="table-responsive">
+                                <table class="reports-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Tipo</th>
+                                            <th>Reportado por</th>
+                                            <th>Fecha</th>
+                                            <th>Prioridad</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>#REP-009</strong></td>
+                                            <td>Contenido inapropiado</td>
+                                            <td>usuario_abc</td>
+                                            <td>Hace 15 min</td>
+                                            <td>
+                                                <span class="priority-badge priority-high">Alta</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-outline-info-modern btn-modern btn-sm">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>#REP-008</strong></td>
+                                            <td>Spam</td>
+                                            <td>moderador_juan</td>
+                                            <td>Hace 1 hora</td>
+                                            <td>
+                                                <span class="priority-badge priority-medium">Media</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-outline-info-modern btn-modern btn-sm">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>#REP-007</strong></td>
+                                            <td>Copyright</td>
+                                            <td>editorial_xyz</td>
+                                            <td>Hace 3 horas</td>
+                                            <td>
+                                                <span class="priority-badge priority-high">Alta</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-outline-info-modern btn-modern btn-sm">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>#REP-006</strong></td>
+                                            <td>Comportamiento</td>
+                                            <td>usuario123</td>
+                                            <td>Ayer</td>
+                                            <td>
+                                                <span class="priority-badge priority-low">Baja</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-outline-info-modern btn-modern btn-sm">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Columna derecha -->
+                <div class="right-column">
+                    <!-- Alertas de moderación -->
+                    <div class="moderator-card mb-4">
+                        <div class="moderator-card-header">
+                            <h3><i class="fas fa-exclamation-triangle"></i> Alertas de Moderación</h3>
+                        </div>
+                        <div class="moderator-card-body">
+                            <div class="moderator-alerts">
+                                <div class="alert-card alert-warning">
+                                    <div class="alert-content">
+                                        <i class="fas fa-user me-2 text-warning"></i>
+                                        <strong>Usuario "spammer123":</strong> 3 reportes de spam
+                                    </div>
+                                    <button class="btn btn-outline-warning btn-sm">
+                                        Revisar
+                                    </button>
+                                </div>
+                                
+                                <div class="alert-card alert-danger">
+                                    <div class="alert-content">
+                                        <i class="fas fa-comment me-2 text-danger"></i>
+                                        <strong>Comentario ofensivo:</strong> En grupo "Debates"
+                                    </div>
+                                    <button class="btn btn-outline-danger btn-sm">
+                                        Eliminar
+                                    </button>
+                                </div>
+                                
+                                <div class="alert-card alert-info">
+                                    <div class="alert-content">
+                                        <i class="fas fa-file me-2 text-info"></i>
+                                        <strong>Recurso sospechoso:</strong> Archivo "guia.pdf"
+                                    </div>
+                                    <button class="btn btn-outline-info btn-sm">
+                                        Verificar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Estadísticas -->
+                    <div class="moderator-card mb-4">
+                        <div class="moderator-card-header">
+                            <h3><i class="fas fa-chart-pie"></i> Estadísticas</h3>
+                        </div>
+                        <div class="moderator-card-body">
+                            <div class="stats-grid">
+                                <div class="stat-box">
+                                    <div class="stat-number text-success">24</div>
+                                    <div class="stat-label">Resueltos esta semana</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-number text-warning">5</div>
+                                    <div class="stat-label">Pendientes</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-number text-info">3</div>
+                                    <div class="stat-label">Usuarios advertidos</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-number text-danger">1</div>
+                                    <div class="stat-label">Usuarios bloqueados</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Herramientas -->
+                    <div class="moderator-card">
+                        <div class="moderator-card-header">
+                            <h3><i class="fas fa-tools"></i> Herramientas</h3>
+                        </div>
+                        <div class="moderator-card-body">
+                            <div class="tools-grid">
+                                <button class="tool-btn">
+                                    <i class="fas fa-search"></i> Buscar usuario
+                                </button>
+                                <button class="tool-btn">
+                                    <i class="fas fa-filter"></i> Filtrar reportes
+                                </button>
+                                <button class="tool-btn">
+                                    <i class="fas fa-envelope"></i> Enviar advertencia
+                                </button>
+                                <button class="tool-btn">
+                                    <i class="fas fa-ban"></i> Suspender usuario
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Efectos interactivos
+        document.querySelectorAll('.moderator-action-card, .tool-btn').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+        
+        // Actualizar contador de reportes pendientes (simulación)
+        function updateReportCount() {
+            const badge = document.querySelector('.moderator-badge');
+            if (badge) {
+                const currentCount = parseInt(badge.textContent);
+                const newCount = Math.max(0, currentCount - 1);
+                badge.textContent = newCount;
+                
+                // Actualizar también el número en la tarjeta de stats
+                const statNumber = document.querySelector('.stat-danger h3');
+                if (statNumber) {
+                    statNumber.textContent = newCount;
+                }
+            }
+        }
+        
+        // Simular actualización cada 30 segundos
+        setInterval(updateReportCount, 30000);
+    </script>
+</body>
+</html>

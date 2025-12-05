@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div th:fragment="header">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+            <div class="container-fluid">
+                <a class="navbar-brand" th:href="@{/}">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    <span class="fw-bold">StudyBuddy</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                        data-bs-target="#navbarMain">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/}">
+                                <i class="fas fa-home me-1"></i> Inicio
+                            </a>
+                        </li>
+                        
+                        <li sec:authorize="isAuthenticated()" class="nav-item">
+                            <a class="nav-link" th:href="@{/groups}">
+                                <i class="fas fa-users me-1"></i> Grupos
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" 
+                               data-bs-toggle="dropdown">
+                                <i class="fas fa-exchange-alt me-1"></i> APIs
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/api/currency}">
+                                        <i class="fas fa-money-bill-wave me-2"></i> Conversor Moneda
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/api/dni}">
+                                        <i class="fas fa-id-card me-2"></i> Consulta DNI
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/api/external}">
+                                        <i class="fas fa-plug me-2"></i> APIs Externas
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        
+                        <li sec:authorize="hasRole('ADMIN')" class="nav-item">
+                            <a class="nav-link text-warning" th:href="@{/admin/dashboard}">
+                                <i class="fas fa-cog me-1"></i> Admin
+                            </a>
+                        </li>
+                        
+                        <li sec:authorize="hasRole('MODERATOR')" class="nav-item">
+                            <a class="nav-link text-info" th:href="@{/moderator/dashboard}">
+                                <i class="fas fa-shield-alt me-1"></i> Moderador
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <ul class="navbar-nav ms-auto">
+                        <li sec:authorize="!isAuthenticated()" class="nav-item">
+                            <a class="btn btn-outline-light me-2" th:href="@{/auth/login}">
+                                <i class="fas fa-sign-in-alt me-1"></i> Login
+                            </a>
+                        </li>
+                        <li sec:authorize="!isAuthenticated()" class="nav-item">
+                            <a class="btn btn-light" th:href="@{/auth/register}">
+                                <i class="fas fa-user-plus me-1"></i> Registro
+                            </a>
+                        </li>
+                        
+                        <li sec:authorize="isAuthenticated()" class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" 
+                               href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle fa-lg me-2"></i>
+                                <span sec:authentication="name">Usuario</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <div class="dropdown-header">
+                                        <small class="text-muted">ROL</small>
+                                        <div>
+                                            <span sec:authentication="principal.authorities" 
+                                                  class="badge bg-primary">
+                                                Usuario
+                                            </span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/user/dashboard}">
+                                        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/user/profile}">
+                                        <i class="fas fa-user me-2"></i> Mi Perfil
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/user/groups}">
+                                        <i class="fas fa-users me-2"></i> Mis Grupos
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                
+                                <li>
+                                    <form th:action="@{/auth/logout}" method="post" class="mb-0" id="logoutForm">
+                                        <button type="submit" class="dropdown-item text-danger fw-bold">
+                                            <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    
+    <script>
+        // Mejorar funcionalidad de logout
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutForms = document.querySelectorAll('form[action*="/auth/logout"]');
+            logoutForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    // Opcional: mostrar confirmación antes de cerrar sesión
+                    // Descomentar si quieres confirmación:
+                    // if (!confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                    //     e.preventDefault();
+                    //     return false;
+                    // }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

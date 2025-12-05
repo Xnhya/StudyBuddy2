@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderar Contenido - StudyBuddy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div th:replace="fragments/sidebar :: sidebar('moderator')"></div>
+            
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Messages -->
+                <div th:replace="fragments/messages :: messages"></div>
+                
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-info">
+                            <i class="fas fa-flag me-2"></i>Moderación de Contenido
+                        </h2>
+                        <p class="text-muted mb-0">Revisa y gestiona contenido reportado</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-info">
+                            <i class="fas fa-filter me-2"></i> Filtrar
+                        </button>
+                        <button class="btn btn-info">
+                            <i class="fas fa-plus me-2"></i> Nuevo Reporte
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Content Tabs -->
+                <ul class="nav nav-tabs mb-4" id="contentTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="reports-tab" data-bs-toggle="tab" 
+                                data-bs-target="#reports" type="button">
+                            <i class="fas fa-flag me-2"></i>Reportes
+                            <span class="badge bg-danger ms-1">5</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="comments-tab" data-bs-toggle="tab" 
+                                data-bs-target="#comments" type="button">
+                            <i class="fas fa-comments me-2"></i>Comentarios
+                            <span class="badge bg-warning ms-1">3</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="resources-tab" data-bs-toggle="tab" 
+                                data-bs-target="#resources" type="button">
+                            <i class="fas fa-file me-2"></i>Recursos
+                            <span class="badge bg-info ms-1">2</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="users-tab" data-bs-toggle="tab" 
+                                data-bs-target="#users" type="button">
+                            <i class="fas fa-users me-2"></i>Usuarios
+                            <span class="badge bg-danger ms-1">1</span>
+                        </button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="contentTabContent">
+                    <!-- Reports Tab -->
+                    <div class="tab-pane fade show active" id="reports" role="tabpanel">
+                        <!-- Search Bar -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" placeholder="Buscar reporte...">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select">
+                                            <option>Todos los tipos</option>
+                                            <option>Contenido inapropiado</option>
+                                            <option>Spam</option>
+                                            <option>Copyright</option>
+                                            <option>Comportamiento</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select">
+                                            <option>Todos los estados</option>
+                                            <option>Pendiente</option>
+                                            <option>En revisión</option>
+                                            <option>Resuelto</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-info w-100">
+                                            <i class="fas fa-search"></i> Buscar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Reports List -->
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Reportes Pendientes (5)</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <!-- Report 1 -->
+                                <div class="p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1">
+                                                <span class="badge bg-danger me-2">ALTA</span>
+                                                Contenido ofensivo en comentarios
+                                            </h6>
+                                            <p class="text-muted mb-0 small">
+                                                <i class="fas fa-user me-1"></i> Reportado por: usuario_abc
+                                                <i class="fas fa-clock ms-3 me-1"></i> Hace 15 minutos
+                                            </p>
+                                        </div>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-success">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="mb-2">
+                                        <strong>Descripción:</strong> Usuario publicó comentarios ofensivos en el grupo "Debates Históricos"
+                                    </p>
+                                    <div class="d-flex">
+                                        <button class="btn btn-sm btn-outline-warning me-2">
+                                            <i class="fas fa-user-slash me-1"></i> Advertir usuario
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger me-2">
+                                            <i class="fas fa-trash me-1"></i> Eliminar comentario
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-comment me-1"></i> Contactar
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Report 2 -->
+                                <div class="p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1">
+                                                <span class="badge bg-warning me-2">MEDIA</span>
+                                                Spam en grupo de estudio
+                                            </h6>
+                                            <p class="text-muted mb-0 small">
+                                                <i class="fas fa-user me-1"></i> Reportado por: moderador_juan
+                                                <i class="fas fa-clock ms-3 me-1"></i> Hace 1 hora
+                                            </p>
+                                        </div>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-success">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="mb-2">
+                                        <strong>Descripción:</strong> Usuario envía mensajes publicitarios repetitivos
+                                    </p>
+                                    <div class="d-flex">
+                                        <button class="btn btn-sm btn-outline-warning me-2">
+                                            <i class="fas fa-user-slash me-1"></i> Suspender temporalmente
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger me-2">
+                                            <i class="fas fa-trash me-1"></i> Eliminar mensajes
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Report 3 -->
+                                <div class="p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1">
+                                                <span class="badge bg-danger me-2">ALTA</span>
+                                                Violación de copyright
+                                            </h6>
+                                            <p class="text-muted mb-0 small">
+                                                <i class="fas fa-user me-1"></i> Reportado por: editorial_xyz
+                                                <i class="fas fa-clock ms-3 me-1"></i> Hace 3 horas
+                                            </p>
+                                        </div>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-success">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="mb-2">
+                                        <strong>Descripción:</strong> Usuario compartió material protegido sin permiso
+                                    </p>
+                                    <div class="d-flex">
+                                        <button class="btn btn-sm btn-outline-danger me-2">
+                                            <i class="fas fa-trash me-1"></i> Eliminar recurso
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning me-2">
+                                            <i class="fas fa-ban me-1"></i> Bloquear usuario
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Report 4 -->
+                                <div class="p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1">
+                                                <span class="badge bg-info me-2">BAJA</span>
+                                                Comportamiento inapropiado
+                                            </h6>
+                                            <p class="text-muted mb-0 small">
+                                                <i class="fas fa-user me-1"></i> Reportado por: usuario123
+                                                <i class="fas fa-clock ms-3 me-1"></i> Ayer
+                                            </p>
+                                        </div>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-success">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="mb-2">
+                                        <strong>Descripción:</strong> Usuario insulta a otros miembros del grupo
+                                    </p>
+                                    <div class="d-flex">
+                                        <button class="btn btn-sm btn-outline-warning me-2">
+                                            <i class="fas fa-exclamation-triangle me-1"></i> Enviar advertencia
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-comment me-1"></i> Mediar discusión
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Report 5 -->
+                                <div class="p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1">
+                                                <span class="badge bg-warning me-2">MEDIA</span>
+                                                Información falsa
+                                            </h6>
+                                            <p class="text-muted mb-0 small">
+                                                <i class="fas fa-user me-1"></i> Reportado por: prof_garcia
+                                                <i class="fas fa-clock ms-3 me-1"></i> Hace 2 días
+                                            </p>
+                                        </div>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-success">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="mb-2">
+                                        <strong>Descripción:</strong> Usuario comparte información académica incorrecta
+                                    </p>
+                                    <div class="d-flex">
+                                        <button class="btn btn-sm btn-outline-warning me-2">
+                                            <i class="fas fa-exclamation-triangle me-1"></i> Marcar como no verificado
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-edit me-1"></i> Corregir información
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Comments Tab -->
+                    <div class="tab-pane fade" id="comments" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Comentarios Reportados (3)</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Comment 1 -->
+                                <div class="mb-4 p-3 border rounded">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <strong>spammer123</strong>
+                                            <small class="text-muted ms-2">en grupo "Programación Java"</small>
+                                        </div>
+                                        <span class="badge bg-danger">OFENSIVO</span>
+                                    </div>
+                                    <p class="mb-3">
+                                        "Este código es una basura total, ni siquiera compila. Deberían borrarlo."
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i> Publicado hace 2 horas
+                                            <i class="fas fa-flag ms-3 me-1"></i> Reportado 3 veces
+                                        </small>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                            <button class="btn btn-outline-warning">
+                                                <i class="fas fa-user-slash"></i> Bloquear usuario
+                                            </button>
+                                            <button class="btn btn-outline-info">
+                                                <i class="fas fa-eye-slash"></i> Ocultar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Comment 2 -->
+                                <div class="mb-4 p-3 border rounded">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <strong>usuario_anon</strong>
+                                            <small class="text-muted ms-2">en recurso "Guía Matemáticas"</small>
+                                        </div>
+                                        <span class="badge bg-warning">SPAM</span>
+                                    </div>
+                                    <p class="mb-3">
+                                        "¡Visita mi sitio web! www.ventas.com Oferta especial solo por hoy $$$"
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i> Publicado hace 5 horas
+                                            <i class="fas fa-flag ms-3 me-1"></i> Reportado 1 vez
+                                        </small>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                            <button class="btn btn-outline-warning">
+                                                <i class="fas fa-user-slash"></i> Advertir
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Comment 3 -->
+                                <div class="p-3 border rounded">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <strong>estudiante99</strong>
+                                            <small class="text-muted ms-2">en grupo "Historia"</small>
+                                        </div>
+                                        <span class="badge bg-info">INAPROPIADO</span>
+                                    </div>
+                                    <p class="mb-3">
+                                        Comentario con lenguaje ofensivo y ataques personales a otros miembros.
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i> Publicado ayer
+                                            <i class="fas fa-flag ms-3 me-1"></i> Reportado 2 veces
+                                        </small>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                            <button class="btn btn-outline-warning">
+                                                <i class="fas fa-user-slash"></i> Suspender
+                                            </button>
+                                            <button class="btn btn-outline-secondary">
+                                                <i class="fas fa-comment"></i> Contactar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resources Tab -->
+                    <div class="tab-pane fade" id="resources" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Recursos Reportados (2)</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Resource 1 -->
+                                <div class="mb-4 p-3 border rounded">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1">"Examen resuelto 2023.pdf"</h6>
+                                            <p class="text-muted mb-0 small">
+                                                <i class="fas fa-user me-1"></i> Subido por: usuario_nuevo
+                                                <i class="fas fa-users ms-3 me-1"></i> Grupo: Matemáticas Avanzadas
+                                            </p>
+                                        </div>
+                                        <span class="badge bg-danger">COPYRIGHT</span>
+                                    </div>
+                                    <p class="mb-3">
+                                        <strong>Reporte:</strong> Material protegido por derechos de autor, compartido sin permiso.
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i> Subido hace 1 día
+                                            <i class="fas fa-download ms-3 me-1"></i> 15 descargas
+                                        </small>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                            <button class="btn btn-outline-warning">
+                                                <i class="fas fa-ban"></i> Bloquear recurso
+                                            </button>
+                                            <button class="btn btn-outline-info">
+                                                <i class="fas fa-eye"></i> Ver
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Resource 2 -->
+                                <div class="p-3 border rounded">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1">"Fórmulas incorrectas.xlsx"</h6>
+                                            <p class="text-muted mb-0 small">
+                                                <i class="fas fa-user me-1"></i> Subido por: estudiante_x
+                                                <i class="fas fa-users ms-3 me-1"></i> Grupo: Física
+                                            </p>
+                                        </div>
+                                        <span class="badge bg-warning">INFORMACIÓN FALSA</span>
+                                    </div>
+                                    <p class="mb-3">
+                                        <strong>Reporte:</strong> Contiene fórmulas y datos incorrectos que podrían confundir a otros estudiantes.
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i> Subido hace 3 días
+                                            <i class="fas fa-download ms-3 me-1"></i> 8 descargas
+                                        </small>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-warning">
+                                                <i class="fas fa-exclamation-triangle"></i> Marcar como no verificado
+                                            </button>
+                                            <button class="btn btn-outline-info">
+                                                <i class="fas fa-edit"></i> Corregir
+                                            </button>
+                                            <button class="btn btn-outline-secondary">
+                                                <i class="fas fa-eye"></i> Revisar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Users Tab -->
+                    <div class="tab-pane fade" id="users" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Usuarios Reportados (1)</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- User 1 -->
+                                <div class="p-3 border rounded">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <img src="https://ui-avatars.com/api/?name=Spammer+User&background=dc3545&color=fff" 
+                                                     class="rounded-circle me-3" width="60" height="60">
+                                                <div>
+                                                    <h5 class="mb-1">spammer123</h5>
+                                                    <p class="text-muted mb-0">
+                                                        <i class="fas fa-envelope me-1"></i> spam@example.com
+                                                        <i class="fas fa-calendar ms-3 me-1"></i> Registrado: 10/01/2024
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <h6>Historial de reportes:</h6>
+                                                <ul class="mb-0">
+                                                    <li>3 reportes de spam en grupos</li>
+                                                    <li>2 advertencias previas</li>
+                                                    <li>1 suspensión temporal (3 días)</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <h6>Actividad reciente:</h6>
+                                                <div class="d-flex">
+                                                    <span class="badge bg-danger me-2">15 mensajes spam</span>
+                                                    <span class="badge bg-warning me-2">5 grupos afectados</span>
+                                                    <span class="badge bg-info">Última actividad: Hoy</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-outline-danger">
+                                                    <i class="fas fa-ban me-2"></i> Bloquear permanentemente
+                                                </button>
+                                                <button class="btn btn-outline-warning">
+                                                    <i class="fas fa-user-slash me-2"></i> Suspender 7 días
+                                                </button>
+                                                <button class="btn btn-outline-info">
+                                                    <i class="fas fa-envelope me-2"></i> Enviar advertencia final
+                                                </button>
+                                                <button class="btn btn-outline-secondary">
+                                                    <i class="fas fa-eye me-2"></i> Ver actividad completa
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-cogs me-2 text-primary"></i>Acciones Masivas
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-2">
+                                        <button class="btn btn-outline-danger w-100">
+                                            <i class="fas fa-trash me-2"></i> Eliminar seleccionados
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <button class="btn btn-outline-warning w-100">
+                                            <i class="fas fa-check-circle me-2"></i> Marcar como revisados
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <button class="btn btn-outline-success w-100">
+                                            <i class="fas fa-file-export me-2"></i> Generar reporte
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <div th:replace="fragments/footer :: footer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
