@@ -22,7 +22,12 @@ public class ViewController {
 
     @GetMapping("/")
     public String index() { 
-        return "redirect:/home"; 
+        return "redirect:/user/dashboard"; 
+    }
+
+    @GetMapping("/home")
+    public String home() {
+        return "redirect:/user/dashboard";
     }
 
     @GetMapping("/login")
